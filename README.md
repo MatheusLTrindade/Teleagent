@@ -7,7 +7,7 @@ Quando um agent precisa te alertar ou pedir uma decisão, o Teleagent manda mens
 ## Como funciona
 
 ```
-Cursor agent ──CLI/HTTP──▶ teleagent serve (local)
+Cursor agent ──CLI/HTTP──▶ teleagent serve (local / app Windows)
                                 │
                          long polling
                                 │
@@ -19,7 +19,7 @@ Cursor agent ──CLI/HTTP──▶ teleagent serve (local)
 ```
 
 - **1 bot** do Telegram
-- **1 processo local** (`teleagent serve`) com long polling + API em `127.0.0.1:3847`
+- **1 processo local** (`teleagent serve` ou o app Windows) com long polling + API em `127.0.0.1:3847`
 - **N projetos** Cursor — cada alerta/pergunta leva o nome do projeto
 
 Não precisa de VPS nem webhook público.
@@ -34,11 +34,18 @@ Não precisa de VPS nem webhook público.
 
 Opcional — branding no BotFather:
 
-1. `/setuserpic` → escolha o bot → envie PNG/JPG quadrado
+1. `/setuserpic` → escolha o bot → envie PNG/JPG (ex.: `assets/teleagent-bot-avatar.png`)
 2. `/setdescription` e `/setabouttext` → texto curto do bridge
-3. `/setcommands` → `start`, `status`, `help`
+3. `/setcommands`:
 
-### 2. Instalar
+```text
+start - Vincula este chat ao Teleagent
+status - Verifica se o bridge está online
+pending - Lista decisões abertas
+help - Como usar alertas e decisões
+```
+
+### 2. Instalar CLI
 
 ```bash
 git clone https://github.com/MatheusLTrindade/Teleagent.git
@@ -48,38 +55,37 @@ npm run build
 npm link
 ```
 
-### 3. Configurar e subir
+### 3. Configurar
 
 ```bash
-teleagent setup --token <BOT_TOKEN>
+teleagent setup --token <BOT_TOKEN> --allowed-user <SEU_TELEGRAM_USER_ID>
 teleagent serve
 ```
 
-No Telegram, abra o bot e envie `/start` (isso grava o seu `chat_id`).
+No Telegram, abra o bot e envie `/start` (grava o `chat_id`). O `--allowed-user` trava o bot só no seu user id (veja em `/start`).
 
-Em outro terminal:
+### App Windows (bandeja + hub)
 
 ```bash
-teleagent status
-teleagent alert --project demo --message "Bridge ok"
-teleagent ask --project demo --question "Tudo certo?" --options "sim,não"
+npm run desktop:install
+npm run desktop:dev          # desenvolvimento
+npm run desktop:dist         # gera instalador + portable em desktop/release
 ```
 
-Sempre passe `--project` com o nome real do repositório. Sem isso, o bridge usa o basename do cwd (ex.: pasta do usuário).
+O app:
+
+- fica na **bandeja** (itens ocultos) com ícone Teleagent
+- abre o **hub** ao clicar (status, logs, start/stop)
+- pode **iniciar com o Windows**
+- sobe/para o bridge sem terminal
+
+Instale o `Teleagent-Setup-*.exe` ou use o portable. Marque “Iniciar com o Windows” no hub.
 
 ## Formato no Telegram
-
-Mensagens compactas: tipo + projeto na primeira linha; corpo só com o essencial. Sem `id` no chat.
 
 ```text
 ℹ️ INFO · demo
 Bridge ok
-
-⚠️ WARN · demo
-Fila lenta
-
-🚨 ERROR · demo
-Deploy abortado
 
 ❓ DECISÃO · demo
 Tudo certo?
@@ -88,94 +94,92 @@ Tudo certo?
 ✅ DECIDIDO · demo
 Tudo certo?
 → sim
+
+⏰ EXPIRADO · demo
+…
+
+✖️ CANCELADO · demo
+…
 ```
 
-`info` cobre anúncios; `warn`/`error` cobrem urgência. Em decisões com opções, use os botões (não digite a resposta).
+Sempre passe `--project`. Sem isso, tenta o nome do repo git; senão o basename do cwd.
 
 ## CLI
 
 ```text
-teleagent setup     # salva token/chat_id/porta
+teleagent setup     # token / chat_id / porta / allowlist
 teleagent serve     # long polling + API local
 teleagent alert     # alerta (não bloqueia)
 teleagent ask       # pede decisão e espera
+teleagent cancel    # cancela ask pendente
 teleagent status    # health do bridge
 ```
 
 ### Exemplos
 
 ```bash
-teleagent alert --project meu-app --level error --message "Deploy falhou"
+teleagent alert --project meu-app --level error --message "Deploy falhou" --json
 
 teleagent ask \
   --project meu-app \
   --question "Promovo o deploy para produção?" \
-  --options sim,não \
-  --timeout-ms 900000
+  --options "sim,não" \
+  --default não \
+  --timeout-ms 900000 \
+  --json
 
-teleagent ask --question "Qual ambiente?" --options staging,prod --json
+teleagent cancel --id ask_xxx
+teleagent setup --allowed-user 5508763445
 ```
 
-`ask` bloqueia até você responder no Telegram (botão ou reply) ou até o timeout (exit code `2`).
+`ask` bloqueia até resposta, timeout (exit `2`) ou cancelamento. Com `--default`, no timeout usa essa resposta e marca `answered`.
 
 ## API local
 
 Base: `http://127.0.0.1:3847`
 
-| Método | Path                | Uso                     |
-| ------ | ------------------- | ----------------------- |
-| `GET`  | `/health`           | Status                  |
-| `POST` | `/v1/alert`         | Enviar alerta           |
-| `POST` | `/v1/ask`           | Criar pedido de decisão |
-| `GET`  | `/v1/decisions/:id` | Consultar decisão       |
-| `GET`  | `/v1/pending`       | Listar pendentes        |
+| Método | Path                       | Uso               |
+| ------ | -------------------------- | ----------------- |
+| `GET`  | `/health`                  | Status            |
+| `POST` | `/v1/alert`                | Alerta            |
+| `POST` | `/v1/ask`                  | Pedido de decisão |
+| `GET`  | `/v1/decisions/:id`        | Consultar         |
+| `POST` | `/v1/decisions/:id/cancel` | Cancelar          |
+| `POST` | `/v1/decisions/:id/expire` | Expirar / default |
+| `GET`  | `/v1/pending`              | Listar pendentes  |
 
-```bash
-curl -s http://127.0.0.1:3847/health
-
-curl -s -X POST http://127.0.0.1:3847/v1/alert \
-  -H "content-type: application/json" \
-  -d '{"project":"meu-app","level":"warn","message":"Fila lenta"}'
-
-curl -s -X POST http://127.0.0.1:3847/v1/ask \
-  -H "content-type: application/json" \
-  -d '{"project":"meu-app","question":"Seguimos?","options":["sim","não"]}'
-```
+Payload opcional `meta`: `{ "cwd", "gitBranch", "prUrl", "agent" }`.
 
 ## Uso com Cursor
 
-Para agents usarem o Teleagent:
-
-1. Mantenha `teleagent serve` rodando na máquina
-2. No projeto, o agent pode chamar:
+1. Mantenha o bridge online (`teleagent serve` ou app Windows)
+2. Agent chama:
 
 ```bash
-teleagent alert --project <nome> --message "..."
+teleagent alert --project <nome> --message "..." --json
 teleagent ask --project <nome> --question "..." --options "sim,não" --json
 ```
 
-Sempre use `--project` com o nome do repositório para o chat Telegram identificar de qual projeto veio o alerta/decisão.
-Há um skill em [`skills/teleagent/SKILL.md`](./skills/teleagent/SKILL.md) — copie para `~/.cursor/skills/teleagent/` (ou skills do projeto) para o agent descobrir sozinho.
+Skill: [`skills/teleagent/SKILL.md`](./skills/teleagent/SKILL.md) → copie para `~/.cursor/skills/teleagent/`.
 
-Variáveis úteis:
+| Variável                     | Descrição                             |
+| ---------------------------- | ------------------------------------- |
+| `TELEAGENT_BOT_TOKEN`        | Token do BotFather                    |
+| `TELEAGENT_CHAT_ID`          | Chat id                               |
+| `TELEAGENT_ALLOWED_USER_IDS` | Allowlist (ids separados por vírgula) |
+| `TELEAGENT_PORT`             | Porta local (default `3847`)          |
+| `TELEAGENT_PROJECT`          | Nome do projeto                       |
 
-| Variável              | Descrição                                     |
-| --------------------- | --------------------------------------------- |
-| `TELEAGENT_BOT_TOKEN` | Token do BotFather                            |
-| `TELEAGENT_CHAT_ID`   | Seu chat id                                   |
-| `TELEAGENT_PORT`      | Porta local (default `3847`)                  |
-| `TELEAGENT_PROJECT`   | Nome do projeto (senão usa o basename do cwd) |
-
-Config persistente: `~/.teleagent/config.json`
+Config: `~/.teleagent/config.json`
 
 ## Desenvolvimento
 
 ```bash
 npm install
-npm run dev -- status
-npm run serve
 npm run typecheck
 npm run build
+npm run serve
+npm run desktop:dev
 ```
 
 ## Licença

@@ -8,6 +8,8 @@ export const DEFAULT_HOST = '127.0.0.1';
 export type TeleagentConfig = {
 	botToken: string;
 	chatId: string;
+	/** Se preenchido, só estes Telegram user ids podem /start e decidir */
+	allowedUserIds: string[];
 	port: number;
 	host: string;
 };
@@ -46,6 +48,22 @@ export function loadEnvFile(): void {
 	}
 }
 
+function parseIdList(raw: unknown): string[] {
+	if (Array.isArray(raw)) {
+		return raw
+			.map(String)
+			.map((s) => s.trim())
+			.filter(Boolean);
+	}
+	if (typeof raw === 'string') {
+		return raw
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean);
+	}
+	return [];
+}
+
 function readFileConfig(): Partial<TeleagentConfig> {
 	const file = configPath();
 	if (!fs.existsSync(file)) return {};
@@ -53,12 +71,14 @@ function readFileConfig(): Partial<TeleagentConfig> {
 		const raw = JSON.parse(fs.readFileSync(file, 'utf8')) as Partial<{
 			botToken: string;
 			chatId: string;
+			allowedUserIds: string[] | string;
 			port: number;
 			host: string;
 		}>;
 		return {
 			botToken: raw.botToken,
 			chatId: raw.chatId,
+			allowedUserIds: parseIdList(raw.allowedUserIds),
 			port: raw.port,
 			host: raw.host,
 		};
@@ -67,16 +87,24 @@ function readFileConfig(): Partial<TeleagentConfig> {
 	}
 }
 
+function writeConfigFile(config: TeleagentConfig): void {
+	fs.mkdirSync(configDir(), { recursive: true, mode: 0o700 });
+	fs.writeFileSync(configPath(), JSON.stringify(config, null, 2) + '\n', {
+		encoding: 'utf8',
+		mode: 0o600,
+	});
+}
+
 export function saveConfig(partial: Partial<TeleagentConfig>): TeleagentConfig {
 	const current = readFileConfig();
 	const next: TeleagentConfig = {
 		botToken: partial.botToken ?? current.botToken ?? '',
 		chatId: partial.chatId ?? current.chatId ?? '',
+		allowedUserIds: partial.allowedUserIds ?? current.allowedUserIds ?? [],
 		port: partial.port ?? current.port ?? DEFAULT_PORT,
 		host: partial.host ?? current.host ?? DEFAULT_HOST,
 	};
-	fs.mkdirSync(configDir(), { recursive: true });
-	fs.writeFileSync(configPath(), JSON.stringify(next, null, 2) + '\n', 'utf8');
+	writeConfigFile(next);
 	return next;
 }
 
@@ -86,6 +114,7 @@ export function loadConfig(opts?: {
 }): TeleagentConfig {
 	loadEnvFile();
 	const file = readFileConfig();
+	const envAllowed = parseIdList(process.env.TELEAGENT_ALLOWED_USER_IDS);
 	const config: TeleagentConfig = {
 		botToken:
 			process.env.TELEAGENT_BOT_TOKEN?.trim() ||
@@ -97,6 +126,8 @@ export function loadConfig(opts?: {
 			process.env.TELEGRAM_CHAT_ID?.trim() ||
 			file.chatId ||
 			'',
+		allowedUserIds:
+			envAllowed.length > 0 ? envAllowed : file.allowedUserIds || [],
 		port: Number(process.env.TELEAGENT_PORT || file.port || DEFAULT_PORT),
 		host: process.env.TELEAGENT_HOST || file.host || DEFAULT_HOST,
 	};
@@ -127,6 +158,24 @@ export function loadConfig(opts?: {
 	}
 
 	return config;
+}
+
+export function isUserAllowed(
+	config: Pick<TeleagentConfig, 'allowedUserIds'>,
+	userId: string | number | undefined,
+): boolean {
+	if (!config.allowedUserIds.length) return true;
+	if (userId === undefined || userId === null) return false;
+	return config.allowedUserIds.includes(String(userId));
+}
+
+export function isChatAllowed(
+	config: Pick<TeleagentConfig, 'chatId'>,
+	chatId: string | number | undefined,
+): boolean {
+	if (!config.chatId) return true;
+	if (chatId === undefined || chatId === null) return false;
+	return String(chatId) === String(config.chatId);
 }
 
 export function baseUrl(

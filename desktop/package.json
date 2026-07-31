@@ -1,0 +1,69 @@
+{
+	"name": "teleagent-desktop",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Teleagent Windows hub — tray + start/stop bridge",
+	"main": "src/main.cjs",
+	"scripts": {
+		"start": "electron .",
+		"predist": "node scripts/prepare-bridge.cjs",
+		"prepack": "node scripts/prepare-bridge.cjs",
+		"dist": "electron-builder --win",
+		"pack": "electron-builder --win --dir"
+	},
+	"build": {
+		"appId": "com.teleagent.desktop",
+		"productName": "Teleagent",
+		"directories": {
+			"output": "release"
+		},
+		"files": [
+			"src/**/*",
+			"hub/**/*",
+			"icons/**/*",
+			"package.json"
+		],
+		"extraResources": [
+			{
+				"from": "bridge-staging/",
+				"to": "bridge",
+				"filter": [
+					"**/*"
+				]
+			}
+		],
+		"win": {
+			"target": [
+				{
+					"target": "nsis",
+					"arch": [
+						"x64"
+					]
+				},
+				{
+					"target": "portable",
+					"arch": [
+						"x64"
+					]
+				}
+			],
+			"icon": "icons/icon.png",
+			"artifactName": "Teleagent-Setup-${version}.${ext}"
+		},
+		"nsis": {
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true,
+			"createDesktopShortcut": true,
+			"createStartMenuShortcut": true,
+			"shortcutName": "Teleagent"
+		},
+		"portable": {
+			"artifactName": "Teleagent-Portable-${version}.exe"
+		}
+	},
+	"devDependencies": {
+		"electron": "^35.2.1",
+		"electron-builder": "^26.0.12",
+		"esbuild": "^0.25.12"
+	}
+}

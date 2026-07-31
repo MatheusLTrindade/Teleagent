@@ -1,6 +1,6 @@
 import type { TeleagentConfig } from './config.js';
 import { baseUrl } from './config.js';
-import type { DecisionRequest } from './store.js';
+import type { DecisionMeta, DecisionRequest } from './store.js';
 import type { AlertLevel } from './telegram.js';
 import { sleep } from './util.js';
 
@@ -31,6 +31,7 @@ async function requestJson<T>(
 			[
 				`Bridge local offline em ${url}`,
 				'  teleagent serve',
+				'  ou abra o app Teleagent (bandeja do Windows)',
 				'Inicie o bridge e tente de novo.',
 			].join('\n'),
 		);
@@ -45,13 +46,23 @@ async function requestJson<T>(
 
 export async function health(
 	config: Pick<TeleagentConfig, 'host' | 'port'>,
-): Promise<{ ok: boolean; chatId: boolean; pending: number }> {
+): Promise<{
+	ok: boolean;
+	chatId: boolean;
+	pending: number;
+	allowedUsers?: number;
+}> {
 	return requestJson(config, '/health');
 }
 
 export async function postAlert(
 	config: Pick<TeleagentConfig, 'host' | 'port'>,
-	payload: { project?: string; message: string; level?: AlertLevel },
+	payload: {
+		project?: string;
+		message: string;
+		level?: AlertLevel;
+		meta?: DecisionMeta;
+	},
 ): Promise<{
 	ok: true;
 	id: string;
@@ -71,6 +82,8 @@ export async function postAsk(
 		question: string;
 		options?: string[];
 		timeoutMs?: number;
+		defaultAnswer?: string;
+		meta?: DecisionMeta;
 	},
 ): Promise<DecisionRequest> {
 	return requestJson(config, '/v1/ask', {
@@ -84,6 +97,30 @@ export async function getDecision(
 	id: string,
 ): Promise<DecisionRequest> {
 	return requestJson(config, `/v1/decisions/${encodeURIComponent(id)}`);
+}
+
+export async function cancelAsk(
+	config: Pick<TeleagentConfig, 'host' | 'port'>,
+	id: string,
+): Promise<DecisionRequest> {
+	return requestJson(config, `/v1/decisions/${encodeURIComponent(id)}/cancel`, {
+		method: 'POST',
+	});
+}
+
+export async function expireAsk(
+	config: Pick<TeleagentConfig, 'host' | 'port'>,
+	id: string,
+): Promise<DecisionRequest> {
+	return requestJson(config, `/v1/decisions/${encodeURIComponent(id)}/expire`, {
+		method: 'POST',
+	});
+}
+
+export async function listPending(
+	config: Pick<TeleagentConfig, 'host' | 'port'>,
+): Promise<{ decisions: DecisionRequest[] }> {
+	return requestJson(config, '/v1/pending');
 }
 
 export async function waitForDecision(
@@ -101,9 +138,13 @@ export async function waitForDecision(
 		}
 		await sleep(Math.min(pollMs, Math.max(250, deadline - Date.now())));
 	}
-	const last = await getDecision(config, id);
-	if (last.status === 'pending') {
-		return { ...last, status: 'expired' };
+	try {
+		return await expireAsk(config, id);
+	} catch {
+		const last = await getDecision(config, id);
+		if (last.status === 'pending') {
+			return { ...last, status: 'expired' };
+		}
+		return last;
 	}
-	return last;
 }

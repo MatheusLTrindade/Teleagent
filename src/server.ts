@@ -2,14 +2,22 @@ import http from 'node:http';
 import type { Bot } from 'grammy';
 import type { TeleagentConfig } from './config.js';
 import {
+	cancelDecision,
 	createId,
+	expireDecision,
 	expireStaleDecisions,
 	getDecision,
 	listPendingDecisions,
 	putDecision,
+	type DecisionMeta,
 	type DecisionRequest,
 } from './store.js';
-import { sendAlert, sendAsk, type AlertLevel } from './telegram.js';
+import {
+	sendAlert,
+	sendAsk,
+	updateDecisionMessage,
+	type AlertLevel,
+} from './telegram.js';
 import { detectProject, readJsonBody } from './util.js';
 
 export type ServerDeps = {
@@ -25,6 +33,17 @@ function json(res: http.ServerResponse, status: number, body: unknown): void {
 		'Content-Length': Buffer.byteLength(payload),
 	});
 	res.end(payload);
+}
+
+function parseMeta(raw: unknown): DecisionMeta | undefined {
+	if (!raw || typeof raw !== 'object') return undefined;
+	const m = raw as Record<string, unknown>;
+	const meta: DecisionMeta = {};
+	if (typeof m.cwd === 'string') meta.cwd = m.cwd;
+	if (typeof m.gitBranch === 'string') meta.gitBranch = m.gitBranch;
+	if (typeof m.prUrl === 'string') meta.prUrl = m.prUrl;
+	if (typeof m.agent === 'string') meta.agent = m.agent;
+	return Object.keys(meta).length ? meta : undefined;
 }
 
 export function createServer(deps: ServerDeps): http.Server {
@@ -44,6 +63,7 @@ export function createServer(deps: ServerDeps): http.Server {
 					service: 'teleagent',
 					chatId: Boolean(deps.config.chatId),
 					pending: listPendingDecisions().length,
+					allowedUsers: deps.config.allowedUserIds.length,
 				});
 				return;
 			}
@@ -51,6 +71,44 @@ export function createServer(deps: ServerDeps): http.Server {
 			if (req.method === 'GET' && pathname === '/v1/pending') {
 				expireStaleDecisions();
 				json(res, 200, { decisions: listPendingDecisions() });
+				return;
+			}
+
+			if (
+				req.method === 'POST' &&
+				pathname.startsWith('/v1/decisions/') &&
+				pathname.endsWith('/cancel')
+			) {
+				const id = pathname.slice('/v1/decisions/'.length, -'/cancel'.length);
+				const decision = cancelDecision(id);
+				if (!decision) {
+					json(res, 404, { error: 'decision_not_found', id });
+					return;
+				}
+				if (decision.status === 'cancelled' && deps.config.chatId) {
+					await updateDecisionMessage(deps.bot, deps.config.chatId, decision);
+				}
+				log(`cancel ${id}`);
+				json(res, 200, decision);
+				return;
+			}
+
+			if (
+				req.method === 'POST' &&
+				pathname.startsWith('/v1/decisions/') &&
+				pathname.endsWith('/expire')
+			) {
+				const id = pathname.slice('/v1/decisions/'.length, -'/expire'.length);
+				const decision = expireDecision(id, { useDefault: true });
+				if (!decision) {
+					json(res, 404, { error: 'decision_not_found', id });
+					return;
+				}
+				if (deps.config.chatId) {
+					await updateDecisionMessage(deps.bot, deps.config.chatId, decision);
+				}
+				log(`expire ${id} → ${decision.status}`);
+				json(res, 200, decision);
 				return;
 			}
 
@@ -74,11 +132,18 @@ export function createServer(deps: ServerDeps): http.Server {
 					});
 					return;
 				}
-				const body = (await readJsonBody(req)) as {
+				let body: {
 					project?: string;
 					message?: string;
 					level?: AlertLevel;
+					meta?: unknown;
 				};
+				try {
+					body = (await readJsonBody(req)) as typeof body;
+				} catch (err) {
+					json(res, 400, { error: String(err) });
+					return;
+				}
 				if (!body.message?.trim()) {
 					json(res, 400, {
 						error: 'message_required',
@@ -87,6 +152,18 @@ export function createServer(deps: ServerDeps): http.Server {
 							message: 'Deploy falhou',
 							level: 'error',
 						},
+					});
+					return;
+				}
+				if (
+					body.level &&
+					body.level !== 'info' &&
+					body.level !== 'warn' &&
+					body.level !== 'error'
+				) {
+					json(res, 400, {
+						error: 'invalid_level',
+						hint: 'use info|warn|error',
 					});
 					return;
 				}
@@ -101,6 +178,7 @@ export function createServer(deps: ServerDeps): http.Server {
 						project,
 						message: body.message.trim(),
 						level,
+						meta: parseMeta(body.meta),
 					},
 				);
 				log(`alerta ${id} → ${project}`);
@@ -116,12 +194,20 @@ export function createServer(deps: ServerDeps): http.Server {
 					});
 					return;
 				}
-				const body = (await readJsonBody(req)) as {
+				let body: {
 					project?: string;
 					question?: string;
 					options?: string[];
 					timeoutMs?: number;
+					defaultAnswer?: string;
+					meta?: unknown;
 				};
+				try {
+					body = (await readJsonBody(req)) as typeof body;
+				} catch (err) {
+					json(res, 400, { error: String(err) });
+					return;
+				}
 				if (!body.question?.trim()) {
 					json(res, 400, {
 						error: 'question_required',
@@ -146,14 +232,22 @@ export function createServer(deps: ServerDeps): http.Server {
 					status: 'pending',
 					createdAt: new Date().toISOString(),
 					timeoutMs,
+					defaultAnswer: body.defaultAnswer?.trim() || undefined,
+					meta: parseMeta(body.meta),
 				};
-				const telegramMessageId = await sendAsk(
-					deps.bot,
-					deps.config.chatId,
-					decision,
-				);
-				decision.telegramMessageId = telegramMessageId;
 				putDecision(decision);
+				try {
+					const telegramMessageId = await sendAsk(
+						deps.bot,
+						deps.config.chatId,
+						decision,
+					);
+					decision.telegramMessageId = telegramMessageId;
+					putDecision(decision);
+				} catch (err) {
+					cancelDecision(decision.id);
+					throw err;
+				}
 				log(`ask ${decision.id} → ${decision.project}`);
 				json(res, 200, decision);
 				return;
@@ -162,7 +256,7 @@ export function createServer(deps: ServerDeps): http.Server {
 			json(res, 404, { error: 'not_found' });
 		} catch (err) {
 			log(`HTTP error: ${String(err)}`);
-			json(res, 500, { error: 'internal_error', message: String(err) });
+			json(res, 500, { error: 'internal_error' });
 		}
 	});
 }

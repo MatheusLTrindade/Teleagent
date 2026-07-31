@@ -1,3 +1,6 @@
+import { execSync } from 'node:child_process';
+import path from 'node:path';
+
 export type Json =
 	| null
 	| boolean
@@ -6,18 +9,33 @@ export type Json =
 	| Json[]
 	| { [key: string]: Json };
 
+const MAX_BODY_BYTES = 256 * 1024;
+
 export async function readJsonBody(req: {
 	on: (event: string, cb: (...args: unknown[]) => void) => void;
 }): Promise<Json> {
 	const chunks: Buffer[] = [];
+	let size = 0;
 	await new Promise<void>((resolve, reject) => {
-		req.on('data', (chunk) => chunks.push(Buffer.from(chunk as Buffer)));
+		req.on('data', (chunk) => {
+			const buf = Buffer.from(chunk as Buffer);
+			size += buf.length;
+			if (size > MAX_BODY_BYTES) {
+				reject(new Error('payload_too_large'));
+				return;
+			}
+			chunks.push(buf);
+		});
 		req.on('end', () => resolve());
 		req.on('error', (err) => reject(err));
 	});
 	const raw = Buffer.concat(chunks).toString('utf8').trim();
 	if (!raw) return {};
-	return JSON.parse(raw) as Json;
+	try {
+		return JSON.parse(raw) as Json;
+	} catch {
+		throw new Error('invalid_json');
+	}
 }
 
 export function parseArgs(argv: string[]): {
@@ -90,11 +108,39 @@ export function flagBool(
 	return false;
 }
 
+function detectGitProjectName(cwd: string): string | undefined {
+	try {
+		const top = execSync('git rev-parse --show-toplevel', {
+			cwd,
+			encoding: 'utf8',
+			stdio: ['ignore', 'pipe', 'ignore'],
+		}).trim();
+		if (top) return path.basename(top);
+	} catch {
+		/* not a git repo */
+	}
+	return undefined;
+}
+
+export function detectGitBranch(cwd = process.cwd()): string | undefined {
+	try {
+		return execSync('git rev-parse --abbrev-ref HEAD', {
+			cwd,
+			encoding: 'utf8',
+			stdio: ['ignore', 'pipe', 'ignore'],
+		}).trim();
+	} catch {
+		return undefined;
+	}
+}
+
 export function detectProject(explicit?: string): string {
 	if (explicit?.trim()) return explicit.trim();
 	if (process.env.TELEAGENT_PROJECT?.trim()) {
 		return process.env.TELEAGENT_PROJECT.trim();
 	}
+	const fromGit = detectGitProjectName(process.cwd());
+	if (fromGit) return fromGit;
 	return pathBasename(process.cwd());
 }
 
@@ -112,4 +158,9 @@ export function escapeHtml(text: string): string {
 		.replaceAll('&', '&amp;')
 		.replaceAll('<', '&lt;')
 		.replaceAll('>', '&gt;');
+}
+
+export function truncate(text: string, max: number): string {
+	if (text.length <= max) return text;
+	return `${text.slice(0, Math.max(0, max - 1))}…`;
 }
