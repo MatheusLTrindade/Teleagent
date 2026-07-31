@@ -21,7 +21,9 @@
 		"typecheck": "tsc --noEmit",
 		"desktop:install": "npm install --prefix desktop",
 		"desktop:dev": "npm run build && npm --prefix desktop start",
-		"desktop:dist": "npm run build && npm --prefix desktop run dist"
+		"desktop:dist": "npm run build && npm --prefix desktop run dist",
+		"website:dev": "npm --prefix website run dev",
+		"website:build": "npm --prefix website run build"
 	},
 	"engines": {
 		"node": ">=20"
