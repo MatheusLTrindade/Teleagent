@@ -241,7 +241,11 @@ async function startBridge() {
 	}
 	const entry = bridgeEntry();
 	if (!fs.existsSync(entry)) {
-		pushLog(`Bridge não encontrado: ${entry}. Rode npm run build.`);
+		pushLog(
+			isDev
+				? `Bridge não encontrado: ${entry}. Rode npm run build na raiz.`
+				: `Bridge não encontrado: ${entry}. Reinstale pelo Setup oficial (release com bridge empacotado).`,
+		);
 		return { ok: false, error: 'bridge_missing' };
 	}
 	const child = spawn(process.execPath, [entry, 'serve'], {
