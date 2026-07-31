@@ -13,7 +13,7 @@ export async function runSetup(
 Examples:
   teleagent setup --token 123456:ABC...
   teleagent setup --token 123456:ABC... --chat-id 987654321
-  teleagent setup --allowed-user 5508763445
+  teleagent setup --allowed-user <SEU_TELEGRAM_USER_ID>
 `);
 		return 0;
 	}
