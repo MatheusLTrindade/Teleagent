@@ -41,7 +41,8 @@
 			{
 				"provider": "github",
 				"owner": "MatheusLTrindade",
-				"repo": "Teleagent"
+				"repo": "Teleagent",
+				"releaseType": "release"
 			}
 		],
 		"win": {
