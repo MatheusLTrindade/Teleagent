@@ -21,6 +21,10 @@ esbuild.buildSync({
 	logLevel: 'info',
 });
 
+if (!fs.existsSync(outfile) || fs.statSync(outfile).size < 1) {
+	throw new Error(`prepare-bridge failed: missing or empty ${outfile}`);
+}
+
 fs.writeFileSync(
 	path.join(staging, 'package.json'),
 	JSON.stringify({ name: 'teleagent-bridge', private: true }, null, 2) + '\n',

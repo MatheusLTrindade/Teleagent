@@ -7,6 +7,16 @@ e este projeto adere a [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-07-31
+
+### Added
+
+- Primeira release pública estável
+
+### Fixed
+
+- Installer Electron volta a empacotar o bridge (`prepare-bridge` no `publish` + verificação no CI)
+
 ### Changed
 
 - Documentação e higiene OSS para publicação do repositório
@@ -29,6 +39,7 @@ e este projeto adere a [SemVer](https://semver.org/lang/pt-BR/).
 - App Windows (bandeja + hub) com autostart
 - Skill Cursor em `skills/teleagent/`
 
-[Unreleased]: https://github.com/MatheusLTrindade/Teleagent/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/MatheusLTrindade/Teleagent/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/MatheusLTrindade/Teleagent/releases/tag/v1.0.0
 [0.2.0]: https://github.com/MatheusLTrindade/Teleagent/releases/tag/v0.2.0
 [0.1.0]: https://github.com/MatheusLTrindade/Teleagent/commits/main

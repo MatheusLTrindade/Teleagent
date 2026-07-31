@@ -29,7 +29,7 @@ body:
     id: version
     attributes:
       label: Versão
-      description: Tag/release ou commit (ex. v0.2.0)
+      description: Tag/release ou commit (ex. v1.0.0)
     validations:
       required: true
   - type: dropdown

@@ -1,6 +1,6 @@
 {
 	"name": "teleagent",
-	"version": "0.2.0",
+	"version": "1.0.0",
 	"description": "Bridge local entre agentes Cursor e Telegram — alertas e decisões humanas no loop, por projeto.",
 	"type": "module",
 	"bin": {
