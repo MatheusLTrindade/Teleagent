@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { clsx } from "clsx";
 
 const links = [
@@ -17,6 +17,7 @@ export function SiteHeader() {
 	const pathname = usePathname();
 	const [scrolled, setScrolled] = useState(false);
 	const [open, setOpen] = useState(false);
+	const menuId = useId();
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
@@ -29,6 +30,15 @@ export function SiteHeader() {
 		setOpen(false);
 	}, [pathname]);
 
+	useEffect(() => {
+		if (!open) return;
+		const onKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setOpen(false);
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [open]);
+
 	return (
 		<header
 			className={clsx(
@@ -39,7 +49,11 @@ export function SiteHeader() {
 			)}
 		>
 			<div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 md:px-8">
-				<Link href="/" className="group flex items-center gap-3">
+				<Link
+					href="/"
+					className="group flex items-center gap-3"
+					onClick={() => setOpen(false)}
+				>
 					<Image
 						src="/icon.png"
 						alt=""
@@ -53,7 +67,7 @@ export function SiteHeader() {
 					</span>
 				</Link>
 
-				<nav className="hidden items-center gap-1 md:flex">
+				<nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
 					{links.map((link) => (
 						<Link
 							key={link.href}
@@ -81,9 +95,10 @@ export function SiteHeader() {
 
 				<button
 					type="button"
-					className="btn btn-ghost !px-3 !py-2 md:hidden"
+					className="btn btn-ghost !inline-flex !px-3 !py-2 md:!hidden"
 					aria-expanded={open}
-					aria-label="Abrir menu"
+					aria-controls={menuId}
+					aria-label={open ? "Fechar menu" : "Abrir menu"}
 					onClick={() => setOpen((v) => !v)}
 				>
 					{open ? "Fechar" : "Menu"}
@@ -91,13 +106,17 @@ export function SiteHeader() {
 			</div>
 
 			{open ? (
-				<div className="border-t border-[color:var(--line)] bg-[color:rgba(6,9,18,0.95)] px-5 py-4 md:hidden">
-					<div className="flex flex-col gap-1">
+				<div
+					id={menuId}
+					className="border-t border-[color:var(--line)] bg-[color:rgba(6,9,18,0.95)] px-5 py-4 md:!hidden"
+				>
+					<nav className="flex flex-col gap-1" aria-label="Mobile">
 						{links.map((link) => (
 							<Link
 								key={link.href}
 								href={link.href}
 								className="rounded-xl px-3 py-3 text-[color:var(--ink)]"
+								onClick={() => setOpen(false)}
 							>
 								{link.label}
 							</Link>
@@ -107,10 +126,11 @@ export function SiteHeader() {
 							target="_blank"
 							rel="noreferrer"
 							className="rounded-xl px-3 py-3 text-[color:var(--cyan)]"
+							onClick={() => setOpen(false)}
 						>
 							GitHub
 						</a>
-					</div>
+					</nav>
 				</div>
 			) : null}
 		</header>

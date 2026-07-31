@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { DocBody } from "@/app/docs/_components/doc-bodies";
-import { DocsSidebar } from "@/app/docs/_components/docs-sidebar";
-import { DOC_NAV, getDoc } from "@/modules/docs/public";
+import { DocBody, DOC_NAV, getDoc } from "@/modules/docs/public.server";
+import { DocsSidebar } from "../_components/docs-sidebar";
 
 type Props = { params: Promise<{ slug: string }> };
 

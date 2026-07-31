@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { groupedDocs } from "@/modules/docs/public";
+import { groupedDocs } from "@/modules/docs/public.server";
 
 export function DocsSidebar({ active }: { active: string }) {
 	return (

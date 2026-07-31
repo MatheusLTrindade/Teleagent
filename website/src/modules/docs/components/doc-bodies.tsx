@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CopyCode } from "@/app/docs/_components/copy-code";
+import { CopyCode } from "./copy-code";
 
 export function DocIntro() {
 	return (

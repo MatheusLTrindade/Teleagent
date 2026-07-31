@@ -143,47 +143,53 @@ pre {
 	z-index: -1;
 }
 
-.btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.55rem;
-	border-radius: 999px;
-	padding: 0.85rem 1.35rem;
-	font-weight: 600;
-	letter-spacing: -0.01em;
-	transition:
-		transform 180ms ease,
-		box-shadow 180ms ease,
-		background 180ms ease,
-		border-color 180ms ease;
-	border: 1px solid transparent;
-	cursor: pointer;
-}
+@layer components {
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.55rem;
+		border-radius: 999px;
+		padding: 0.85rem 1.35rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		transition:
+			transform 180ms ease,
+			box-shadow 180ms ease,
+			background 180ms ease,
+			border-color 180ms ease;
+		border: 1px solid transparent;
+		cursor: pointer;
+	}
 
-.btn:hover {
-	transform: translateY(-1px);
-}
+	.btn:hover {
+		transform: translateY(-1px);
+	}
 
-.btn-primary {
-	background: linear-gradient(135deg, var(--cyan), #7ae7ff 45%, var(--mint));
-	color: #041018;
-	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 12px 40px rgba(79, 209, 255, 0.28);
-}
+	.btn-primary {
+		background: linear-gradient(135deg, var(--cyan), #7ae7ff 45%, var(--mint));
+		color: #041018;
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, 0.08),
+			0 12px 40px rgba(79, 209, 255, 0.28);
+	}
 
-.btn-primary:hover {
-	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 16px 48px rgba(93, 255, 168, 0.28);
-}
+	.btn-primary:hover {
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, 0.12),
+			0 16px 48px rgba(93, 255, 168, 0.28);
+	}
 
-.btn-ghost {
-	background: rgba(12, 18, 32, 0.55);
-	border-color: var(--line);
-	color: var(--ink);
-	backdrop-filter: blur(10px);
-}
+	.btn-ghost {
+		background: rgba(12, 18, 32, 0.55);
+		border-color: var(--line);
+		color: var(--ink);
+		backdrop-filter: blur(10px);
+	}
 
-.btn-ghost:hover {
-	border-color: color-mix(in oklab, var(--cyan) 45%, transparent);
+	.btn-ghost:hover {
+		border-color: color-mix(in oklab, var(--cyan) 45%, transparent);
+	}
 }
 
 .prose-docs h2 {

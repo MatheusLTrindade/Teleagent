@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, JetBrains_Mono, Sora } from "next/font/google";
-import { PointerGlow } from "@/app/_components/pointer-glow";
-import { SiteFooter } from "@/app/_components/site-footer";
-import { SiteHeader } from "@/app/_components/site-header";
+import {
+	PointerGlow,
+	SiteHeader,
+} from "@/modules/site-chrome/public.client";
+import { SiteFooter } from "@/modules/site-chrome/public.server";
 import "./globals.css";
 
 const display = Sora({
