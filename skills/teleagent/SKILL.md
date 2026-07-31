@@ -15,7 +15,7 @@ Local bridge: Cursor agent ↔ Telegram. Requires `teleagent serve` running on t
 - Alert the user without blocking (`alert`)
 - Ask for a decision and **wait** before continuing (`ask`)
 
-Always pass `--project` when known. Prefer `--json` on `ask` so you can parse the answer.
+Always pass `--project` with the real repo/project name (never omit — otherwise Telegram shows the cwd basename, e.g. the home folder). Prefer `--json` on `ask` so you can parse the answer. Quote options in shells that split on spaces: `--options "sim,não"`.
 
 ## Alert (non-blocking)
 
@@ -62,6 +62,8 @@ Then retry. Do not fall back to guessing user intent.
 ## Rules
 
 - Never block the user with interactive terminal prompts for decisions — use `teleagent ask`
+- Always include `--project <name>` so alerts/asks are identifiable in Telegram
 - Keep messages short and actionable
 - Include enough context in the question (what happened, what you will do next for each option)
 - One decision per `ask`; do not batch unrelated choices
+- Levels: `info` (status/announce), `warn`, `error` — pick the matching urgency

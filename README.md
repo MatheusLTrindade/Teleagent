@@ -32,6 +32,12 @@ Não precisa de VPS nem webhook público.
 2. `/newbot` → escolha nome e username
 3. Copie o token
 
+Opcional — branding no BotFather:
+
+1. `/setuserpic` → escolha o bot → envie PNG/JPG quadrado
+2. `/setdescription` e `/setabouttext` → texto curto do bridge
+3. `/setcommands` → `start`, `status`, `help`
+
 ### 2. Instalar
 
 ```bash
@@ -55,9 +61,36 @@ Em outro terminal:
 
 ```bash
 teleagent status
-teleagent alert --message "Bridge ok"
-teleagent ask --question "Tudo certo?" --options sim,não
+teleagent alert --project demo --message "Bridge ok"
+teleagent ask --project demo --question "Tudo certo?" --options "sim,não"
 ```
+
+Sempre passe `--project` com o nome real do repositório. Sem isso, o bridge usa o basename do cwd (ex.: pasta do usuário).
+
+## Formato no Telegram
+
+Mensagens compactas: tipo + projeto na primeira linha; corpo só com o essencial. Sem `id` no chat.
+
+```text
+ℹ️ INFO · demo
+Bridge ok
+
+⚠️ WARN · demo
+Fila lenta
+
+🚨 ERROR · demo
+Deploy abortado
+
+❓ DECISÃO · demo
+Tudo certo?
+[sim] [não]
+
+✅ DECIDIDO · demo
+Tudo certo?
+→ sim
+```
+
+`info` cobre anúncios; `warn`/`error` cobrem urgência. Em decisões com opções, use os botões (não digite a resposta).
 
 ## CLI
 
@@ -89,13 +122,13 @@ teleagent ask --question "Qual ambiente?" --options staging,prod --json
 
 Base: `http://127.0.0.1:3847`
 
-| Método | Path | Uso |
-|--------|------|-----|
-| `GET` | `/health` | Status |
-| `POST` | `/v1/alert` | Enviar alerta |
-| `POST` | `/v1/ask` | Criar pedido de decisão |
-| `GET` | `/v1/decisions/:id` | Consultar decisão |
-| `GET` | `/v1/pending` | Listar pendentes |
+| Método | Path                | Uso                     |
+| ------ | ------------------- | ----------------------- |
+| `GET`  | `/health`           | Status                  |
+| `POST` | `/v1/alert`         | Enviar alerta           |
+| `POST` | `/v1/ask`           | Criar pedido de decisão |
+| `GET`  | `/v1/decisions/:id` | Consultar decisão       |
+| `GET`  | `/v1/pending`       | Listar pendentes        |
 
 ```bash
 curl -s http://127.0.0.1:3847/health
@@ -118,19 +151,20 @@ Para agents usarem o Teleagent:
 
 ```bash
 teleagent alert --project <nome> --message "..."
-teleagent ask --project <nome> --question "..." --options sim,não --json
+teleagent ask --project <nome> --question "..." --options "sim,não" --json
 ```
 
+Sempre use `--project` com o nome do repositório para o chat Telegram identificar de qual projeto veio o alerta/decisão.
 Há um skill em [`skills/teleagent/SKILL.md`](./skills/teleagent/SKILL.md) — copie para `~/.cursor/skills/teleagent/` (ou skills do projeto) para o agent descobrir sozinho.
 
 Variáveis úteis:
 
-| Variável | Descrição |
-|----------|-----------|
-| `TELEAGENT_BOT_TOKEN` | Token do BotFather |
-| `TELEAGENT_CHAT_ID` | Seu chat id |
-| `TELEAGENT_PORT` | Porta local (default `3847`) |
-| `TELEAGENT_PROJECT` | Nome do projeto (senão usa o basename do cwd) |
+| Variável              | Descrição                                     |
+| --------------------- | --------------------------------------------- |
+| `TELEAGENT_BOT_TOKEN` | Token do BotFather                            |
+| `TELEAGENT_CHAT_ID`   | Seu chat id                                   |
+| `TELEAGENT_PORT`      | Porta local (default `3847`)                  |
+| `TELEAGENT_PROJECT`   | Nome do projeto (senão usa o basename do cwd) |
 
 Config persistente: `~/.teleagent/config.json`
 

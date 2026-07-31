@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-import { parseArgs } from "./util.js";
-import { runSetup, runStatus } from "./commands/setup.js";
-import { runServe } from "./commands/serve.js";
-import { runAlert } from "./commands/alert.js";
-import { runAsk } from "./commands/ask.js";
+import { parseArgs } from './util.js';
+import { runSetup, runStatus } from './commands/setup.js';
+import { runServe } from './commands/serve.js';
+import { runAlert } from './commands/alert.js';
+import { runAsk } from './commands/ask.js';
 
 function printRootHelp(): void {
-  console.log(`teleagent — bridge local Cursor ↔ Telegram
+	console.log(`teleagent — bridge local Cursor ↔ Telegram
 
 Usage:
   teleagent <command> [options]
@@ -30,37 +30,42 @@ Docs:
 }
 
 async function main(): Promise<number> {
-  const argv = process.argv.slice(2);
-  if (argv.length === 0 || argv[0] === "help" || argv[0] === "--help" || argv[0] === "-h") {
-    printRootHelp();
-    return 0;
-  }
+	const argv = process.argv.slice(2);
+	if (
+		argv.length === 0 ||
+		argv[0] === 'help' ||
+		argv[0] === '--help' ||
+		argv[0] === '-h'
+	) {
+		printRootHelp();
+		return 0;
+	}
 
-  const { command, flags, positionals } = parseArgs(process.argv);
+	const { command, flags, positionals } = parseArgs(process.argv);
 
-  switch (command) {
-    case "setup":
-      return runSetup(flags);
-    case "serve":
-      return runServe(flags);
-    case "alert":
-      return runAlert(flags, positionals);
-    case "ask":
-      return runAsk(flags, positionals);
-    case "status":
-      return runStatus(flags);
-    default:
-      console.error(`Error: comando desconhecido "${command}"`);
-      console.error("  teleagent --help");
-      return 1;
-  }
+	switch (command) {
+		case 'setup':
+			return runSetup(flags);
+		case 'serve':
+			return runServe(flags);
+		case 'alert':
+			return runAlert(flags, positionals);
+		case 'ask':
+			return runAsk(flags, positionals);
+		case 'status':
+			return runStatus(flags);
+		default:
+			console.error(`Error: comando desconhecido "${command}"`);
+			console.error('  teleagent --help');
+			return 1;
+	}
 }
 
 main()
-  .then((code) => {
-    process.exitCode = code;
-  })
-  .catch((err) => {
-    console.error(String(err?.stack || err));
-    process.exitCode = 1;
-  });
+	.then((code) => {
+		process.exitCode = code;
+	})
+	.catch((err) => {
+		console.error(String(err?.stack || err));
+		process.exitCode = 1;
+	});
