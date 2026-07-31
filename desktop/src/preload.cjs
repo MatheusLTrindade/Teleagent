@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld('teleagent', {
 	openConfig: () => ipcRenderer.invoke('open-config'),
 	openExternal: (url) => ipcRenderer.invoke('open-external', url),
 	fitWindow: () => ipcRenderer.invoke('fit-window'),
+	checkUpdates: () => ipcRenderer.invoke('check-updates'),
+	downloadUpdate: () => ipcRenderer.invoke('download-update'),
+	installUpdate: () => ipcRenderer.invoke('install-update'),
 	onStatus: (cb) => {
 		const handler = (_e, data) => cb(data);
 		ipcRenderer.on('status', handler);

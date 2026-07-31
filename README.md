@@ -81,6 +81,24 @@ O app:
 
 Instale o `Teleagent-Setup-*.exe` ou use o portable. Marque “Iniciar com o Windows” no hub.
 
+### Atualizações automáticas (app Windows)
+
+O hub Electron checa o [GitHub Releases](https://github.com/MatheusLTrindade/Teleagent/releases) por tags `vX.Y.Z`. Em builds instalados:
+
+- a versão atual aparece no header (`v0.2.0`)
+- se houver release mais nova, o hub oferece baixar e reiniciar
+- o menu da bandeja tem “Verificar atualizações”
+
+Para publicar uma release:
+
+```bash
+# alinhe a versão em package.json e desktop/package.json, commit na main
+git tag v0.2.1
+git push origin v0.2.1
+```
+
+O workflow `Release desktop` gera o instalador NSIS + portable e sobe no Release da tag. O auto-update usa o artefato NSIS (não o portable).
+
 ## Formato no Telegram
 
 ```text

@@ -1,15 +1,20 @@
 {
 	"name": "teleagent-desktop",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"private": true,
 	"description": "Teleagent Windows hub — tray + start/stop bridge",
 	"main": "src/main.cjs",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MatheusLTrindade/Teleagent.git"
+	},
 	"scripts": {
 		"start": "electron .",
 		"predist": "node scripts/prepare-bridge.cjs",
 		"prepack": "node scripts/prepare-bridge.cjs",
 		"dist": "electron-builder --win",
-		"pack": "electron-builder --win --dir"
+		"pack": "electron-builder --win --dir",
+		"publish": "electron-builder --win --publish always"
 	},
 	"build": {
 		"appId": "com.teleagent.desktop",
@@ -30,6 +35,13 @@
 				"filter": [
 					"**/*"
 				]
+			}
+		],
+		"publish": [
+			{
+				"provider": "github",
+				"owner": "MatheusLTrindade",
+				"repo": "Teleagent"
 			}
 		],
 		"win": {
@@ -65,5 +77,8 @@
 		"electron": "^35.2.1",
 		"electron-builder": "^26.0.12",
 		"esbuild": "^0.25.12"
+	},
+	"dependencies": {
+		"electron-updater": "^6.8.9"
 	}
 }

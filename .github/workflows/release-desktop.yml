@@ -1,0 +1,71 @@
+name: Release desktop
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Resolve version from tag
+        id: version
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-].+)?$ ]]; then
+            echo "Tag inválida: $TAG (esperado vX.Y.Z)"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Sync package versions
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          node -e "
+            const fs = require('fs');
+            for (const file of ['package.json', 'desktop/package.json']) {
+              const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
+              pkg.version = process.env.VERSION;
+              fs.writeFileSync(file, JSON.stringify(pkg, null, '\t') + '\n');
+            }
+          "
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Install root deps
+        run: npm ci
+
+      - name: Build bridge
+        run: npm run build
+
+      - name: Install desktop deps
+        run: npm ci --prefix desktop
+
+      - name: Build and publish Windows artifacts
+        working-directory: desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish
+
+      - name: Summarize
+        shell: bash
+        run: |
+          echo "Release ${{ steps.version.outputs.tag }} publicado."
+          echo "Artefatos: Teleagent-Setup-${{ steps.version.outputs.version }}.exe + portable + latest.yml"
