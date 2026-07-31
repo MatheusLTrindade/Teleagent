@@ -6,6 +6,13 @@
 	"bin": {
 		"teleagent": "./dist/index.js"
 	},
+	"files": [
+		"dist",
+		"skills",
+		"README.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsx src/index.ts",
@@ -24,9 +31,20 @@
 		"telegram",
 		"ai-agent",
 		"human-in-the-loop",
-		"local-first"
+		"local-first",
+		"electron",
+		"cli"
 	],
+	"author": "MatheusLTrindade",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MatheusLTrindade/Teleagent.git"
+	},
+	"bugs": {
+		"url": "https://github.com/MatheusLTrindade/Teleagent/issues"
+	},
+	"homepage": "https://github.com/MatheusLTrindade/Teleagent#readme",
 	"dependencies": {
 		"grammy": "^1.36.1"
 	},

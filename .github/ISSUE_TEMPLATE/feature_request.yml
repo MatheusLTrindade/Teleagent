@@ -1,0 +1,33 @@
+name: Feature request
+description: Ideia ou melhoria
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema / motivação
+      description: O que fica difícil ou impossível hoje?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Como você imagina a solução?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Opcional
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Escopo
+      options:
+        - label: CLI / bridge
+        - label: App Windows
+        - label: Docs / skill
+        - label: CI / releases

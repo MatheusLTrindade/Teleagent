@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/MatheusLTrindade/Teleagent/security/advisories/new
+    about: Reporte vulnerabilidades em privado (não abra issue pública).
+  - name: Discussions / dúvidas
+    url: https://github.com/MatheusLTrindade/Teleagent/issues
+    about: Use uma issue com o template adequado (bug ou feature).

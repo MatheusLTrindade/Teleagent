@@ -1,0 +1,51 @@
+name: Bug report
+description: Algo não funciona como esperado
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado pelo reporte. **Não** inclua tokens, `.env` ou `config.json`.
+  - type: textarea
+    id: describe
+    attributes:
+      label: O que aconteceu?
+      description: Comportamento observado vs esperado
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Como reproduzir
+      description: Passos mínimos
+      placeholder: |
+        1. teleagent serve
+        2. teleagent ask ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão
+      description: Tag/release ou commit (ex. v0.2.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Superfície
+      options:
+        - CLI / bridge
+        - App Windows (hub)
+        - Skill Cursor
+        - Docs / outro
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs relevantes
+      description: Remova secrets antes de colar
+      render: shell
