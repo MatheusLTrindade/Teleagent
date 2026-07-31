@@ -14,9 +14,17 @@ const cfgChat = document.getElementById('cfgChat');
 const cfgAllow = document.getElementById('cfgAllow');
 const cfgPort = document.getElementById('cfgPort');
 const configMsg = document.getElementById('configMsg');
+const appVersion = document.getElementById('appVersion');
+const updateBanner = document.getElementById('updateBanner');
+const updateTitle = document.getElementById('updateTitle');
+const updateDetail = document.getElementById('updateDetail');
+const btnCheckUpdate = document.getElementById('btnCheckUpdate');
+const btnApplyUpdate = document.getElementById('btnApplyUpdate');
 
 let online = false;
 let fillingConfig = false;
+/** @type {string | null} */
+let lastUpdateStatus = null;
 
 function renderLogs(lines) {
 	logsEl.textContent = (lines || []).join('\n');
@@ -38,12 +46,76 @@ function applyToggle() {
 	btnToggle.classList.toggle('danger', online);
 }
 
+function applyUpdate(update, version) {
+	if (version) {
+		appVersion.textContent = `v${version}`;
+	}
+	if (!update) {
+		updateBanner.hidden = true;
+		return;
+	}
+
+	const status = update.status;
+	const show =
+		status === 'checking' ||
+		status === 'available' ||
+		status === 'downloading' ||
+		status === 'ready' ||
+		status === 'error';
+	updateBanner.hidden = !show;
+	if (!show) {
+		if (status !== lastUpdateStatus) {
+			lastUpdateStatus = status;
+			void window.teleagent.fitWindow();
+		}
+		return;
+	}
+
+	const available = update.availableVersion
+		? `v${update.availableVersion}`
+		: '';
+	btnApplyUpdate.hidden = true;
+	btnCheckUpdate.disabled = status === 'checking' || status === 'downloading';
+	btnApplyUpdate.disabled = false;
+
+	if (status === 'checking') {
+		updateTitle.textContent = 'Verificando…';
+		updateDetail.textContent = 'Consultando GitHub Releases.';
+	} else if (status === 'available') {
+		updateTitle.textContent = `Nova versão ${available}`;
+		updateDetail.textContent = `Você está em v${version}.`;
+		btnApplyUpdate.hidden = false;
+		btnApplyUpdate.textContent = 'Baixar atualização';
+	} else if (status === 'downloading') {
+		const pct =
+			update.progress !== null && update.progress !== undefined
+				? ` ${update.progress}%`
+				: '';
+		updateTitle.textContent = `Baixando${pct}`;
+		updateDetail.textContent = available ? `Versão ${available}` : 'Aguarde…';
+	} else if (status === 'ready') {
+		updateTitle.textContent = `Pronto para instalar ${available}`;
+		updateDetail.textContent = 'O app vai reiniciar para aplicar.';
+		btnApplyUpdate.hidden = false;
+		btnApplyUpdate.textContent = 'Instalar e reiniciar';
+	} else if (status === 'error') {
+		updateTitle.textContent = 'Falha ao atualizar';
+		updateDetail.textContent = update.error || 'Tente novamente.';
+	}
+
+	if (status !== lastUpdateStatus) {
+		lastUpdateStatus = status;
+		void window.teleagent.fitWindow();
+	}
+}
+
 function applyStatus(s) {
 	if (!s) return;
 	online = Boolean(s.running || s.health?.ok);
 	pill.textContent = online ? 'online' : 'offline';
 	pill.className = `pill ${online ? 'ok' : 'off'}`;
 	applyToggle();
+	applyUpdate(s.update, s.version);
 	factToken.textContent = s.config?.hasToken ? 'configurado' : 'ausente';
 	factChat.textContent = s.config?.chatId || 'não vinculado';
 	factPending.textContent =
@@ -94,6 +166,32 @@ btnTest.addEventListener('click', async () => {
 		await refresh();
 	} finally {
 		btnTest.disabled = false;
+	}
+});
+
+btnCheckUpdate.addEventListener('click', async () => {
+	btnCheckUpdate.disabled = true;
+	try {
+		await window.teleagent.checkUpdates();
+		await refresh();
+	} finally {
+		btnCheckUpdate.disabled = false;
+	}
+});
+
+btnApplyUpdate.addEventListener('click', async () => {
+	btnApplyUpdate.disabled = true;
+	try {
+		const s = await window.teleagent.getStatus();
+		const status = s?.update?.status;
+		if (status === 'available') {
+			await window.teleagent.downloadUpdate();
+		} else if (status === 'ready') {
+			await window.teleagent.installUpdate();
+		}
+		await refresh();
+	} finally {
+		btnApplyUpdate.disabled = false;
 	}
 });
 

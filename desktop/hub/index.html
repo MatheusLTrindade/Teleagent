@@ -17,11 +17,31 @@
 			<img src="../icons/icon.png" alt="" class="logo" />
 			<div>
 				<h1>Teleagent</h1>
-				<p>Bridge agents ↔ Telegram</p>
+				<p>
+					Bridge agents ↔ Telegram
+					<span class="version" id="appVersion">v—</span>
+				</p>
 			</div>
 		</div>
-		<div class="pill" id="statusPill">checando…</div>
+		<div class="top-meta">
+			<div class="pill" id="statusPill">checando…</div>
+		</div>
 	</header>
+
+	<div class="update-banner" id="updateBanner" hidden>
+		<div class="update-copy">
+			<strong id="updateTitle">Atualização</strong>
+			<span class="muted" id="updateDetail"></span>
+		</div>
+		<div class="actions update-actions">
+			<button id="btnCheckUpdate" class="ghost" type="button">
+				Verificar
+			</button>
+			<button id="btnApplyUpdate" class="primary" type="button" hidden>
+				Atualizar
+			</button>
+		</div>
+	</div>
 
 	<nav class="tabs" role="tablist">
 		<button class="tab active" data-tab="home" type="button">Início</button>

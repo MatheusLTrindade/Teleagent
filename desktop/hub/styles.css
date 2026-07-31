@@ -75,6 +75,63 @@ body {
 	font-size: 0.84rem;
 }
 
+.version {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 1px 7px;
+	border-radius: 999px;
+	border: 1px solid var(--line);
+	color: var(--cyan);
+	font-family: Consolas, "Courier New", monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.02em;
+	vertical-align: 1px;
+}
+
+.top-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.update-banner {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 12px;
+	padding: 10px 12px;
+	border-radius: 14px;
+	border: 1px solid rgba(79, 209, 255, 0.28);
+	background: rgba(18, 40, 70, 0.55);
+	box-shadow: var(--shadow);
+}
+
+.update-banner[hidden] {
+	display: none;
+}
+
+.update-copy {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+.update-copy strong {
+	font-size: 0.88rem;
+}
+
+.update-copy .muted {
+	margin: 0;
+	font-size: 0.78rem;
+}
+
+.update-actions {
+	margin: 0;
+	flex-shrink: 0;
+}
+
 .pill {
 	padding: 6px 12px;
 	border-radius: 999px;
