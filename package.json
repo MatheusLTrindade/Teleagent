@@ -1,0 +1,35 @@
+{
+  "name": "teleagent",
+  "version": "0.1.0",
+  "description": "Bridge local entre agentes Cursor e Telegram — alertas e decisões humanas no loop, por projeto.",
+  "type": "module",
+  "bin": {
+    "teleagent": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "serve": "tsx src/index.ts serve",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "cursor",
+    "telegram",
+    "ai-agent",
+    "human-in-the-loop",
+    "local-first"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "grammy": "^1.36.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
