@@ -13,6 +13,13 @@ const fs = require('node:fs');
 const { spawn } = require('node:child_process');
 const http = require('node:http');
 const os = require('node:os');
+const {
+	setupAutoUpdater,
+	getUpdateState,
+	checkForUpdates,
+	downloadUpdate,
+	installUpdateAndRestart,
+} = require('./updater.cjs');
 
 const DEFAULT_PORT = 3847;
 const isDev = !app.isPackaged;
@@ -206,6 +213,8 @@ async function getStatus() {
 		running: isBridgeRunning() || Boolean(health?.ok),
 		managed: isBridgeRunning(),
 		health,
+		version: app.getVersion(),
+		update: getUpdateState(),
 		config: {
 			botToken: cfg.botToken || '',
 			hasToken: Boolean(cfg.botToken),
@@ -389,6 +398,10 @@ function updateTrayMenu() {
 				label: running ? 'Bridge: online' : 'Bridge: offline',
 				enabled: false,
 			},
+			{
+				label: `Versão ${app.getVersion()}`,
+				enabled: false,
+			},
 			{ type: 'separator' },
 			{
 				label: 'Abrir hub',
@@ -402,6 +415,13 @@ function updateTrayMenu() {
 					updateTrayMenu();
 				},
 			},
+			{
+				label: 'Verificar atualizações',
+				click: async () => {
+					await checkForUpdates();
+					createHubWindow();
+				},
+			},
 			{ type: 'separator' },
 			{
 				label: 'Sair',
@@ -413,7 +433,11 @@ function updateTrayMenu() {
 			},
 		]),
 	);
-	tray.setToolTip(running ? 'Teleagent — online' : 'Teleagent — offline');
+	tray.setToolTip(
+		running
+			? `Teleagent v${app.getVersion()} — online`
+			: `Teleagent v${app.getVersion()} — offline`,
+	);
 }
 
 function createTray() {
@@ -468,11 +492,28 @@ function wireIpc() {
 		await fitHubToContent();
 		return { ok: true };
 	});
+	ipcMain.handle('check-updates', async () => checkForUpdates());
+	ipcMain.handle('download-update', async () => downloadUpdate());
+	ipcMain.handle('install-update', async () => {
+		app.isQuitting = true;
+		return installUpdateAndRestart({ beforeQuit: stopBridge });
+	});
+}
+
+function broadcastStatus() {
+	void getStatus().then((s) => hubWindow?.webContents.send('status', s));
 }
 
 app.whenReady().then(() => {
 	Menu.setApplicationMenu(null);
 	wireIpc();
+	setupAutoUpdater(app, {
+		pushLog,
+		onState: () => {
+			broadcastStatus();
+			updateTrayMenu();
+		},
+	});
 	const prefs = readDesktopPrefs();
 	if (prefs.autostart) applyAutostart(true);
 	createTray();
@@ -480,7 +521,7 @@ app.whenReady().then(() => {
 	void startBridge();
 	setInterval(() => {
 		updateTrayMenu();
-		void getStatus().then((s) => hubWindow?.webContents.send('status', s));
+		broadcastStatus();
 	}, 4000);
 });
 
