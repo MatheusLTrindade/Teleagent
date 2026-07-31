@@ -7,6 +7,8 @@
 
 Bridge **local** entre agentes de IA (Cursor, Claude Code, Codex, etc.) e o **Telegram** — alertas e decisões humanas no loop, por projeto.
 
+Site (divulgação / download / docs): pasta [`website/`](./website) — deploy na Vercel com **Root Directory** = `website`.
+
 Quando um agent precisa te avisar ou pedir aprovação, o Teleagent manda a mensagem no Telegram, espera a resposta e devolve o resultado para o agent continuar sozinho.
 
 **Sem VPS. Sem webhook público.** Só um bot + um processo na sua máquina.
