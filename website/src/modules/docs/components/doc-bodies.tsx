@@ -11,9 +11,14 @@ export function DocIntro() {
 				aprovação, a mensagem vai para o seu chat; você responde; o agent
 				continua.
 			</p>
-			<p>Não há servidor público nem webhook. O Telegram fala só com o processo na sua máquina.</p>
+			<p>
+				Não há servidor público nem webhook. O Telegram fala só com o processo
+				na sua máquina.
+			</p>
 			<ul>
-				<li>CLI + API HTTP em <code>127.0.0.1</code> (padrão <code>3847</code>)</li>
+				<li>
+					CLI + API HTTP em <code>127.0.0.1</code> (padrão <code>3847</code>)
+				</li>
 				<li>App Windows com bandeja, hub e auto-update</li>
 				<li>Allowlist por Telegram user id</li>
 				<li>Skill pronta para agentes Cursor</li>
@@ -22,7 +27,10 @@ export function DocIntro() {
 			<ul>
 				<li>Deploy / migrate / force-push que exigem confirmação humana</li>
 				<li>Alertas de CI, erro ou conclusão sem bloquear o chat do IDE</li>
-				<li>Qualquer fluxo agentic onde “inventar a intenção do usuário” é perigoso</li>
+				<li>
+					Qualquer fluxo agentic onde “inventar a intenção do usuário” é
+					perigoso
+				</li>
 			</ul>
 		</>
 	);
@@ -49,7 +57,9 @@ export function DocQuickstart() {
 				</li>
 				<li>Copie o token</li>
 			</ol>
-			<p>Comandos sugeridos (<code>/setcommands</code>):</p>
+			<p>
+				Comandos sugeridos (<code>/setcommands</code>):
+			</p>
 			<CopyCode
 				code={`start - Vincula este chat ao Teleagent
 status - Verifica se o bridge está online
@@ -271,8 +281,9 @@ export function DocDesktop() {
 	return (
 		<>
 			<p>
-				O app Windows fica na <strong>bandeja</strong>, mostra versão/status/logs
-				e permite start/stop do bridge, autostart com o Windows e auto-update.
+				O app Windows fica na <strong>bandeja</strong>, mostra
+				versão/status/logs e permite start/stop do bridge, autostart com o
+				Windows e auto-update.
 			</p>
 			<h2>Artefatos</h2>
 			<ul>
@@ -312,11 +323,15 @@ export function DocSkill() {
 			</p>
 			<h2>Regras do agent</h2>
 			<ul>
-				<li>Não inventar decisão do usuário — usar <code>ask</code></li>
+				<li>
+					Não inventar decisão do usuário — usar <code>ask</code>
+				</li>
 				<li>
 					Sempre passar <code>--project</code>
 				</li>
-				<li>Preferir <code>--json</code> e ler <code>answer</code></li>
+				<li>
+					Preferir <code>--json</code> e ler <code>answer</code>
+				</li>
 				<li>Se o bridge estiver offline, pedir para o usuário iniciar o app</li>
 			</ul>
 			<CopyCode
@@ -333,8 +348,8 @@ export function DocConfig() {
 	return (
 		<>
 			<p>
-				Arquivo principal: <code>~/.teleagent/config.json</code>. Preferências do
-				desktop: <code>~/.teleagent/desktop.json</code>.
+				Arquivo principal: <code>~/.teleagent/config.json</code>. Preferências
+				do desktop: <code>~/.teleagent/desktop.json</code>.
 			</p>
 			<table>
 				<thead>
@@ -392,8 +407,7 @@ export function DocArchitecture() {
 					<strong>Bridge (serve)</strong> — long polling Grammy + API local
 				</li>
 				<li>
-					<strong>Desktop</strong> — Electron tray/hub, spawn do bridge,
-					updater
+					<strong>Desktop</strong> — Electron tray/hub, spawn do bridge, updater
 				</li>
 			</ol>
 			<h2>Fluxo ask</h2>
