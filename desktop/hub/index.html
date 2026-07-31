@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="Content-Security-Policy"
+		content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Teleagent</title>
+	<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+	<div class="glow"></div>
+	<header class="top">
+		<div class="brand">
+			<img src="../icons/icon.png" alt="" class="logo" />
+			<div>
+				<h1>Teleagent</h1>
+				<p>Bridge agents ↔ Telegram</p>
+			</div>
+		</div>
+		<div class="pill" id="statusPill">checando…</div>
+	</header>
+
+	<nav class="tabs" role="tablist">
+		<button class="tab active" data-tab="home" type="button">Início</button>
+		<button class="tab" data-tab="config" type="button">Configurar</button>
+		<button class="tab" data-tab="docs" type="button">Documentação</button>
+	</nav>
+
+	<section class="panel active" id="panel-home">
+		<div class="grid">
+			<section class="card">
+				<h2>Serviço</h2>
+				<p class="muted">
+					Long polling local + API em
+					<code>127.0.0.1:<span id="hintPort">3847</span></code>.
+				</p>
+				<div class="actions">
+					<button id="btnToggle" class="primary" type="button">Iniciar</button>
+					<button id="btnTest" class="ghost" type="button">Testar</button>
+				</div>
+				<label class="toggle">
+					<input type="checkbox" id="autostart" />
+					<span>Iniciar com o Windows</span>
+				</label>
+				<p class="hint" id="autostartHint"></p>
+			</section>
+
+			<section class="card">
+				<h2>Conexão</h2>
+				<dl class="facts">
+					<div>
+						<dt>Token</dt>
+						<dd id="factToken">—</dd>
+					</div>
+					<div>
+						<dt>Chat</dt>
+						<dd id="factChat">—</dd>
+					</div>
+					<div>
+						<dt>Pending</dt>
+						<dd id="factPending">—</dd>
+					</div>
+					<div>
+						<dt>Allowlist</dt>
+						<dd id="factAllow">—</dd>
+					</div>
+				</dl>
+				<div class="actions">
+					<button id="btnBot" class="ghost" type="button">Abrir bot</button>
+					<button id="btnGoConfig" class="ghost" type="button">
+						Ir para Configurar
+					</button>
+				</div>
+			</section>
+
+			<section class="card wide">
+				<h2>Logs</h2>
+				<pre id="logs" class="logs"></pre>
+			</section>
+		</div>
+	</section>
+
+	<section class="panel" id="panel-config">
+		<div class="card wide">
+			<h2>Configurar bot</h2>
+			<p class="muted">
+				Salva em <code>~/.teleagent/config.json</code>. Depois de salvar token
+				ou porta, reinicie o serviço na aba Início.
+			</p>
+			<form id="configForm" class="form">
+				<label>
+					<span>Bot token (BotFather)</span>
+					<input id="cfgToken" type="password" autocomplete="off" placeholder="123456:ABC..." />
+				</label>
+				<label>
+					<span>Chat ID</span>
+					<input id="cfgChat" type="text" placeholder="ex.: 5508763445" />
+				</label>
+				<label>
+					<span>Allowlist (user ids, vírgula)</span>
+					<input id="cfgAllow" type="text" placeholder="vazio = qualquer /start" />
+				</label>
+				<label>
+					<span>Porta local</span>
+					<input id="cfgPort" type="number" min="1" max="65535" value="3847" />
+				</label>
+				<div class="actions">
+					<button class="primary" type="submit">Salvar</button>
+					<button id="btnRevealToken" class="ghost" type="button">
+						Mostrar token
+					</button>
+					<button id="btnOpenFolder" class="ghost" type="button">
+						Abrir pasta
+					</button>
+				</div>
+				<p class="hint" id="configMsg"></p>
+			</form>
+		</div>
+	</section>
+
+	<section class="panel" id="panel-docs">
+		<div class="card wide docs">
+			<h2>Documentação</h2>
+			<ol>
+				<li>
+					Crie o bot no
+					<a href="https://t.me/BotFather" data-external>@BotFather</a>
+					(<code>/newbot</code>) e copie o token.
+				</li>
+				<li>
+					Cole o token na aba <strong>Configurar</strong> e salve. Opcional:
+					allowlist com seu user id do Telegram.
+				</li>
+				<li>
+					Na aba <strong>Início</strong>, inicie o serviço e marque
+					<strong>Iniciar com o Windows</strong> se quiser autostart.
+				</li>
+				<li>
+					Abra o bot no Telegram e envie <code>/start</code> para vincular o
+					chat.
+				</li>
+				<li>
+					Use <strong>Testar</strong> para mandar um alerta de prova. Se chegar
+					no Telegram, o bridge está ok.
+				</li>
+			</ol>
+			<h3>CLI (Cursor, Claude, Codex, etc.)</h3>
+			<p class="muted">
+				Qualquer agent que rode shell na sua máquina pode usar o Teleagent.
+			</p>
+			<pre class="code">
+teleagent alert --project meu-app --message "Build ok" --json
+teleagent ask --project meu-app --question "Promovo?" --options "sim,não" --json
+teleagent status
+</pre>
+			<h3>Comandos no Telegram</h3>
+			<ul>
+				<li><code>/start</code> — vincula o chat</li>
+				<li><code>/status</code> — bridge + pending</li>
+				<li><code>/pending</code> — decisões abertas</li>
+				<li><code>/help</code> — ajuda</li>
+			</ul>
+			<div class="actions">
+				<button id="btnDocsBot" class="ghost" type="button">Abrir bot</button>
+				<button id="btnDocsFather" class="ghost" type="button">
+					Abrir BotFather
+				</button>
+			</div>
+		</div>
+	</section>
+
+	<script src="app.js"></script>
+</body>
+
+</html>

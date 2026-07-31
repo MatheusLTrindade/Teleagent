@@ -5,3 +5,7 @@ dist/
 *.log
 .DS_Store
 .teleagent-local/
+desktop/node_modules/
+desktop/release/
+desktop/dist/
+desktop/bridge-staging/

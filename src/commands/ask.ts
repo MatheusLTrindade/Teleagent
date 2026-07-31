@@ -1,6 +1,11 @@
 import { loadConfig } from '../config.js';
 import { postAsk, waitForDecision } from '../client.js';
-import { detectProject, flagBool, flagString } from '../util.js';
+import {
+	detectGitBranch,
+	detectProject,
+	flagBool,
+	flagString,
+} from '../util.js';
 
 function parseOptions(raw?: string): string[] | undefined {
 	if (!raw?.trim()) return undefined;
@@ -16,12 +21,12 @@ export async function runAsk(
 ): Promise<number> {
 	if (flagBool(flags, 'help', 'h')) {
 		console.log(`Usage:
-  teleagent ask --question <text> [--project <name>] [--options a,b,c] [--timeout-ms 900000] [--json]
+  teleagent ask --question <text> [--project <name>] [--options a,b,c]
+               [--timeout-ms 900000] [--default <answer>] [--json] [--no-wait]
 
 Examples:
-  teleagent ask --question "Promovo o deploy para produção?" --options sim,não
-  teleagent ask --project meu-app --question "Qual branch uso?" --timeout-ms 600000
-  teleagent ask --question "Seguimos?" --options sim,não --json
+  teleagent ask --project meu-app --question "Promovo?" --options "sim,não"
+  teleagent ask --question "Seguimos?" --options "sim,não" --default sim --json
 `);
 		return 0;
 	}
@@ -32,7 +37,7 @@ Examples:
 		console.error(
 			[
 				'Error: pergunta ausente.',
-				'  teleagent ask --question "Promovo o deploy?" --options sim,não',
+				'  teleagent ask --question "Promovo o deploy?" --options "sim,não"',
 			].join('\n'),
 		);
 		return 1;
@@ -46,12 +51,23 @@ Examples:
 		console.error('Error: --timeout-ms inválido');
 		return 1;
 	}
+	const defaultAnswer = flagString(flags, 'default', 'd');
+	const agent = flagString(flags, 'agent');
+	const prUrl = flagString(flags, 'pr-url', 'pr');
+	const gitBranch = detectGitBranch();
 
 	const created = await postAsk(config, {
 		project,
 		question: question.trim(),
 		options,
 		timeoutMs,
+		defaultAnswer,
+		meta: {
+			cwd: process.cwd(),
+			gitBranch,
+			agent,
+			prUrl,
+		},
 	});
 
 	if (!flagBool(flags, 'no-wait')) {

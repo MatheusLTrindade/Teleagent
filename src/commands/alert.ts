@@ -1,6 +1,11 @@
 import { loadConfig } from '../config.js';
 import { postAlert } from '../client.js';
-import { detectProject, flagBool, flagString } from '../util.js';
+import {
+	detectGitBranch,
+	detectProject,
+	flagBool,
+	flagString,
+} from '../util.js';
 import type { AlertLevel } from '../telegram.js';
 
 export async function runAlert(
@@ -9,12 +14,12 @@ export async function runAlert(
 ): Promise<number> {
 	if (flagBool(flags, 'help', 'h')) {
 		console.log(`Usage:
-  teleagent alert --message <text> [--project <name>] [--level info|warn|error]
+  teleagent alert --message <text> [--project <name>] [--level info|warn|error] [--json]
 
 Examples:
-  teleagent alert --message "Build falhou no CI"
-  teleagent alert --project meu-app --level error --message "Deploy abortado"
-  echo "algo aconteceu" | teleagent alert --stdin
+  teleagent alert --project meu-app --message "Build falhou no CI"
+  teleagent alert --project meu-app --level error --message "Deploy abortado" --json
+  echo "algo aconteceu" | teleagent alert --stdin --project meu-app
 `);
 		return 0;
 	}
@@ -39,17 +44,32 @@ Examples:
 
 	const project = detectProject(flagString(flags, 'project', 'p'));
 	const levelRaw = flagString(flags, 'level', 'l') || 'info';
-	const level: AlertLevel =
-		levelRaw === 'warn' || levelRaw === 'error' ? levelRaw : 'info';
+	if (levelRaw !== 'info' && levelRaw !== 'warn' && levelRaw !== 'error') {
+		console.error('Error: --level deve ser info|warn|error');
+		return 1;
+	}
+	const level: AlertLevel = levelRaw;
+	const agent = flagString(flags, 'agent');
+	const prUrl = flagString(flags, 'pr-url', 'pr');
 
 	const result = await postAlert(config, {
 		project,
 		message: message.trim(),
 		level,
+		meta: {
+			cwd: process.cwd(),
+			gitBranch: detectGitBranch(),
+			agent,
+			prUrl,
+		},
 	});
 
-	console.log(`alerted ${result.id}`);
-	console.log(`project: ${result.project}`);
-	console.log(`telegram_message_id: ${result.telegramMessageId}`);
+	if (flagBool(flags, 'json')) {
+		console.log(JSON.stringify(result, null, 2));
+	} else {
+		console.log(`alerted ${result.id}`);
+		console.log(`project: ${result.project}`);
+		console.log(`telegram_message_id: ${result.telegramMessageId}`);
+	}
 	return 0;
 }

@@ -1,6 +1,6 @@
 {
 	"name": "teleagent",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Bridge local entre agentes Cursor e Telegram — alertas e decisões humanas no loop, por projeto.",
 	"type": "module",
 	"bin": {
@@ -11,7 +11,10 @@
 		"dev": "tsx src/index.ts",
 		"start": "node dist/index.js",
 		"serve": "tsx src/index.ts serve",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"desktop:install": "npm install --prefix desktop",
+		"desktop:dev": "npm run build && npm --prefix desktop start",
+		"desktop:dist": "npm run build && npm --prefix desktop run dist"
 	},
 	"engines": {
 		"node": ">=20"

@@ -8,42 +8,37 @@ description: >-
 
 # Teleagent
 
-Local bridge: Cursor agent ↔ Telegram. Requires `teleagent serve` running on the machine.
+Local bridge: Cursor agent ↔ Telegram. Requires the bridge online (`teleagent serve` or the Windows tray app). Do **not** start `teleagent serve` yourself inside the agent session — if offline, tell the user to start the app/serve.
 
 ## When to use
 
 - Alert the user without blocking (`alert`)
 - Ask for a decision and **wait** before continuing (`ask`)
+- Cancel a pending ask if the plan changed (`cancel`)
 
-Always pass `--project` with the real repo/project name (never omit — otherwise Telegram shows the cwd basename, e.g. the home folder). Prefer `--json` on `ask` so you can parse the answer. Quote options in shells that split on spaces: `--options "sim,não"`.
+Always pass `--project` with the real repo/project name. Prefer `--json` so you can parse the answer. Quote options: `--options "sim,não"`.
 
 ## Alert (non-blocking)
 
 ```bash
-teleagent alert --project <project> --level info|warn|error --message "<text>"
-```
-
-Examples:
-
-```bash
-teleagent alert --project meu-app --level error --message "CI failed on main"
-teleagent alert --project meu-app --message "Migration finished"
+teleagent alert --project <project> --level info|warn|error --message "<text>" --json
 ```
 
 ## Ask (blocking — wait for Telegram reply)
 
 ```bash
-teleagent ask --project <project> --question "<text>" --options a,b [--timeout-ms 900000] --json
+teleagent ask --project <project> --question "<text>" --options a,b [--timeout-ms 900000] [--default <answer>] --json
 ```
 
-Examples:
+On success (`answered`), read `answer` from the JSON. Exit code `2` means timeout/expired/cancelled without a usable default — do not invent a decision; stop or ask again.
+
+Optional async: `--no-wait` then poll is not exposed in CLI beyond `cancel`; prefer blocking `ask` with `--json`.
+
+## Cancel
 
 ```bash
-teleagent ask --project meu-app --question "Promote deploy to production?" --options sim,não --json
-teleagent ask --project meu-app --question "Which target?" --options staging,prod --timeout-ms 600000 --json
+teleagent cancel --id <ask_id> --json
 ```
-
-On success (`answered`), read `answer` from the JSON. Exit code `2` means timeout/expired — do not invent a decision; stop or ask again.
 
 ## Health
 
@@ -51,19 +46,14 @@ On success (`answered`), read `answer` from the JSON. Exit code `2` means timeou
 teleagent status
 ```
 
-If bridge is offline:
-
-```bash
-teleagent serve
-```
-
-Then retry. Do not fall back to guessing user intent.
+If bridge is offline, ask the user to open the Teleagent Windows app (tray) or run `teleagent serve`. Do not guess user intent.
 
 ## Rules
 
 - Never block the user with interactive terminal prompts for decisions — use `teleagent ask`
-- Always include `--project <name>` so alerts/asks are identifiable in Telegram
+- Always include `--project <name>`
 - Keep messages short and actionable
 - Include enough context in the question (what happened, what you will do next for each option)
 - One decision per `ask`; do not batch unrelated choices
-- Levels: `info` (status/announce), `warn`, `error` — pick the matching urgency
+- Levels: `info` (status/announce), `warn`, `error`
+- Exit codes: `0` ok, `1` error/offline, `2` ask timeout/expired/cancelled
