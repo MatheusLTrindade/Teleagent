@@ -38,10 +38,15 @@ export const metadata: Metadata = {
 			"Quando o agent precisa de você, o Telegram responde — e o agent continua.",
 		type: "website",
 		locale: "pt_BR",
+		images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "Teleagent" }],
 	},
 	icons: {
-		icon: "/icon.png",
-		apple: "/icon.png",
+		icon: [
+			{ url: "/favicon.ico", sizes: "any" },
+			{ url: "/icon.png", type: "image/png", sizes: "192x192" },
+			{ url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+		],
+		apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
 	},
 };
 
