@@ -7,6 +7,24 @@ e este projeto adere a [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-07-31
+
+### Added
+
+- Hub multilíngue (pt / en / es) com seletor de idioma
+- Website i18n (`/pt`, `/en`, `/es`) + docs traduzidas
+- Apoio ao desenvolvedor via GitHub Sponsors (`/apoiar`, `FUNDING.yml`)
+- README em inglês e espanhol
+
+### Fixed
+
+- Favicon/ícones do Teleagent no website (substitui o padrão do Next.js)
+- Menu mobile do site (CSS `.btn` vs `md:hidden`)
+
+### Changed
+
+- Arquitetura do website alinhada ao App Router modular (Profile A)
+
 ## [1.0.0] — 2026-07-31
 
 ### Added
