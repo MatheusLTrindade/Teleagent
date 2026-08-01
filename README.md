@@ -197,6 +197,11 @@ Contribuir: [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 Segurança: [`SECURITY.md`](./SECURITY.md).  
 Changelog: [`CHANGELOG.md`](./CHANGELOG.md).
 
+## Apoiar
+
+Se o Teleagent te ajudou, você pode patrocinar o desenvolvimento via
+[GitHub Sponsors](https://github.com/sponsors/MatheusLTrindade).
+
 ## Licença
 
 [MIT](./LICENSE) © MatheusLTrindade
