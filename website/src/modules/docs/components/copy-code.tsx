@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function CopyCode({ code }: { code: string }) {
+	const t = useTranslations("CopyCode");
 	const [copied, setCopied] = useState(false);
 
 	return (
@@ -19,7 +21,7 @@ export function CopyCode({ code }: { code: string }) {
 					window.setTimeout(() => setCopied(false), 1400);
 				}}
 			>
-				{copied ? "Copiado" : "Copiar"}
+				{copied ? t("copied") : t("copy")}
 			</button>
 		</div>
 	);

@@ -1,5 +1,7 @@
 # Teleagent
 
+**Idioma / Language / Idioma:** [Português](./README.md) · [English](./README.en.md) · [Español](./README.es.md)
+
 [![CI](https://github.com/MatheusLTrindade/Teleagent/actions/workflows/ci.yml/badge.svg)](https://github.com/MatheusLTrindade/Teleagent/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/MatheusLTrindade/Teleagent?include_prereleases)](https://github.com/MatheusLTrindade/Teleagent/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)

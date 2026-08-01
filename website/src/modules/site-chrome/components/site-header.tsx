@@ -1,24 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { clsx } from "clsx";
-
-const links = [
-	{ href: "/#como-funciona", label: "Como funciona" },
-	{ href: "/#demo", label: "Demo" },
-	{ href: "/download", label: "Download" },
-	{ href: "/docs", label: "Docs" },
-	{ href: "/apoiar", label: "Apoiar" },
-];
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LanguageSwitcher } from "@/modules/site-chrome/components/language-switcher";
 
 export function SiteHeader() {
+	const t = useTranslations("Nav");
 	const pathname = usePathname();
 	const [scrolled, setScrolled] = useState(false);
 	const [open, setOpen] = useState(false);
 	const menuId = useId();
+
+	const links = useMemo(
+		() => [
+			{ href: "/#como-funciona" as const, label: t("howItWorks") },
+			{ href: "/#demo" as const, label: t("demo") },
+			{ href: "/download" as const, label: t("download") },
+			{ href: "/docs" as const, label: t("docs") },
+			{ href: "/apoiar" as const, label: t("support") },
+		],
+		[t],
+	);
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 12);
@@ -68,7 +73,10 @@ export function SiteHeader() {
 					</span>
 				</Link>
 
-				<nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
+				<nav
+					className="hidden items-center gap-1 md:flex"
+					aria-label={t("mainAria")}
+				>
 					{links.map((link) => (
 						<Link
 							key={link.href}
@@ -90,20 +98,26 @@ export function SiteHeader() {
 						rel="noreferrer"
 						className="btn btn-ghost ml-2 !px-4 !py-2 text-sm"
 					>
-						GitHub
+						{t("github")}
 					</a>
+					<div className="ml-2">
+						<LanguageSwitcher />
+					</div>
 				</nav>
 
-				<button
-					type="button"
-					className="btn btn-ghost !inline-flex !px-3 !py-2 md:!hidden"
-					aria-expanded={open}
-					aria-controls={menuId}
-					aria-label={open ? "Fechar menu" : "Abrir menu"}
-					onClick={() => setOpen((v) => !v)}
-				>
-					{open ? "Fechar" : "Menu"}
-				</button>
+				<div className="flex items-center gap-2 md:hidden">
+					<LanguageSwitcher />
+					<button
+						type="button"
+						className="btn btn-ghost !inline-flex !px-3 !py-2"
+						aria-expanded={open}
+						aria-controls={menuId}
+						aria-label={open ? t("close") : t("menu")}
+						onClick={() => setOpen((v) => !v)}
+					>
+						{open ? t("close") : t("menu")}
+					</button>
+				</div>
 			</div>
 
 			{open ? (
@@ -111,7 +125,7 @@ export function SiteHeader() {
 					id={menuId}
 					className="border-t border-[color:var(--line)] bg-[color:rgba(6,9,18,0.95)] px-5 py-4 md:!hidden"
 				>
-					<nav className="flex flex-col gap-1" aria-label="Mobile">
+					<nav className="flex flex-col gap-1" aria-label={t("mobileAria")}>
 						{links.map((link) => (
 							<Link
 								key={link.href}
@@ -129,7 +143,7 @@ export function SiteHeader() {
 							className="rounded-xl px-3 py-3 text-[color:var(--cyan)]"
 							onClick={() => setOpen(false)}
 						>
-							GitHub
+							{t("github")}
 						</a>
 					</nav>
 				</div>

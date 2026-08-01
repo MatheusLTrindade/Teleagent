@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Step =
 	| { kind: "agent"; text: string }
@@ -9,25 +10,30 @@ type Step =
 	| { kind: "you"; text: string }
 	| { kind: "result"; text: string };
 
-const script: Step[] = [
-	{ kind: "agent", text: "teleagent ask --project release --question …" },
-	{
-		kind: "bot",
-		level: "DECISÃO",
-		text: "Promovo o deploy para produção?",
-		options: ["sim", "não"],
-	},
-	{ kind: "you", text: "sim" },
-	{
-		kind: "result",
-		text: '{ "status": "answered", "answer": "sim" }',
-	},
-];
-
 export function LiveDemo() {
+	const t = useTranslations("LiveDemo");
+	const tCommon = useTranslations("Common");
 	const reduce = useReducedMotion();
 	const [visible, setVisible] = useState(1);
 	const [picked, setPicked] = useState<string | null>(null);
+
+	const yes = tCommon("yes");
+	const no = tCommon("no");
+
+	const script: Step[] = useMemo(
+		() => [
+			{ kind: "agent", text: t("agentCmd") },
+			{
+				kind: "bot",
+				level: t("decision"),
+				text: t("question"),
+				options: [yes, no],
+			},
+			{ kind: "you", text: yes },
+			{ kind: "result", text: t("resultJson") },
+		],
+		[t, yes, no],
+	);
 
 	useEffect(() => {
 		if (reduce) {
@@ -46,28 +52,25 @@ export function LiveDemo() {
 			step?.kind === "bot" && !picked && visible === 2 ? 2400 : 1100;
 		const id = window.setTimeout(() => setVisible((v) => v + 1), delay);
 		return () => window.clearTimeout(id);
-	}, [visible, picked, reduce]);
+	}, [visible, picked, reduce, script]);
 
 	return (
 		<section id="demo" className="scroll-mt-24 px-5 py-16 md:px-8 md:py-24">
 			<div className="mx-auto max-w-6xl">
 				<div className="max-w-2xl">
 					<p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--cyan)]">
-						Ao vivo
+						{t("eyebrow")}
 					</p>
 					<h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold tracking-[-0.04em] md:text-4xl">
-						O agent pergunta. Você decide no bolso.
+						{t("title")}
 					</h2>
-					<p className="mt-3 text-[color:var(--muted)]">
-						Simulação do fluxo `ask`: bloqueia o agent, manda botões no
-						Telegram, devolve JSON e segue.
-					</p>
+					<p className="mt-3 text-[color:var(--muted)]">{t("subtitle")}</p>
 				</div>
 
 				<div className="mt-10 grid gap-6 lg:grid-cols-2">
 					<div className="rounded-[24px] border border-[color:var(--line)] bg-[color:rgba(12,18,32,0.72)] p-5 shadow-[var(--shadow)] md:p-6">
 						<p className="mb-4 text-xs uppercase tracking-[0.14em] text-[color:var(--muted)]">
-							Terminal do agent
+							{t("terminalLabel")}
 						</p>
 						<div className="space-y-3 font-[family-name:var(--font-mono)] text-sm">
 							<AnimatePresence initial={false}>
@@ -112,7 +115,9 @@ export function LiveDemo() {
 							/>
 							<div>
 								<p className="text-sm font-semibold">Teleagent Bot</p>
-								<p className="text-xs text-[color:var(--muted)]">Telegram</p>
+								<p className="text-xs text-[color:var(--muted)]">
+									{t("telegramLabel")}
+								</p>
 							</div>
 						</div>
 						<div className="space-y-3">

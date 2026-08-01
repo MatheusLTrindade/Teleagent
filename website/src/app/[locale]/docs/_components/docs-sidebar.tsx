@@ -1,14 +1,24 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { groupedDocs } from "@/modules/docs/public.server";
 
-export function DocsSidebar({ active }: { active: string }) {
+export async function DocsSidebar({
+	active,
+	locale,
+}: {
+	active: string;
+	locale: string;
+}) {
+	const t = await getTranslations("Docs");
+	const groups = await groupedDocs(locale);
+
 	return (
 		<aside className="md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto">
 			<p className="mb-4 font-[family-name:var(--font-display)] text-sm font-bold tracking-[-0.02em]">
-				Documentação
+				{t("sidebarTitle")}
 			</p>
 			<nav className="space-y-6">
-				{groupedDocs().map(([section, items]) => (
+				{groups.map(([section, items]) => (
 					<div key={section}>
 						<p className="mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
 							{section}

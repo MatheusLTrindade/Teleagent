@@ -18,86 +18,94 @@
 			<div>
 				<h1>Teleagent</h1>
 				<p>
-					Bridge agents ↔ Telegram
+					<span data-i18n="tagline">Bridge agents ↔ Telegram</span>
 					<span class="version" id="appVersion">v—</span>
 				</p>
 			</div>
 		</div>
 		<div class="top-meta">
-			<div class="pill" id="statusPill">checando…</div>
+			<label class="lang">
+				<span class="sr-only" data-i18n="langLabel">Idioma</span>
+				<select id="langSelect" aria-label="Language">
+					<option value="pt">PT</option>
+					<option value="en">EN</option>
+					<option value="es">ES</option>
+				</select>
+			</label>
+			<div class="pill" id="statusPill" data-i18n="statusChecking">checando…</div>
 		</div>
 	</header>
 
 	<div class="update-banner" id="updateBanner" hidden>
 		<div class="update-copy">
-			<strong id="updateTitle">Atualização</strong>
+			<strong id="updateTitle" data-i18n="updateDefault">Atualização</strong>
 			<span class="muted" id="updateDetail"></span>
 		</div>
 		<div class="actions update-actions">
-			<button id="btnCheckUpdate" class="ghost" type="button">
+			<button id="btnCheckUpdate" class="ghost" type="button" data-i18n="btnCheckUpdate">
 				Verificar
 			</button>
-			<button id="btnApplyUpdate" class="primary" type="button" hidden>
+			<button id="btnApplyUpdate" class="primary" type="button" hidden data-i18n="btnApplyUpdate">
 				Atualizar
 			</button>
 		</div>
 	</div>
 
 	<nav class="tabs" role="tablist">
-		<button class="tab active" data-tab="home" type="button">Início</button>
-		<button class="tab" data-tab="config" type="button">Configurar</button>
-		<button class="tab" data-tab="docs" type="button">Documentação</button>
+		<button class="tab active" data-tab="home" type="button" data-i18n="tabHome">Início</button>
+		<button class="tab" data-tab="config" type="button" data-i18n="tabConfig">Configurar</button>
+		<button class="tab" data-tab="docs" type="button" data-i18n="tabDocs">Documentação</button>
 	</nav>
 
 	<section class="panel active" id="panel-home">
 		<div class="grid">
 			<section class="card">
-				<h2>Serviço</h2>
+				<h2 data-i18n="serviceTitle">Serviço</h2>
 				<p class="muted">
-					Long polling local + API em
+					<span data-i18n="serviceDesc">Long polling local + API em</span>
 					<code>127.0.0.1:<span id="hintPort">3847</span></code>.
 				</p>
 				<div class="actions">
-					<button id="btnToggle" class="primary" type="button">Iniciar</button>
-					<button id="btnTest" class="ghost" type="button">Testar</button>
+					<button id="btnToggle" class="primary" type="button" data-i18n="btnStart">Iniciar</button>
+					<button id="btnTest" class="ghost" type="button" data-i18n="btnTest">Testar</button>
 				</div>
 				<label class="toggle">
 					<input type="checkbox" id="autostart" />
-					<span>Iniciar com o Windows</span>
+					<span data-i18n="autostartLabel">Iniciar com o Windows</span>
 				</label>
 				<p class="hint" id="autostartHint"></p>
 			</section>
 
 			<section class="card">
-				<h2>Conexão</h2>
+				<h2 data-i18n="connectionTitle">Conexão</h2>
 				<dl class="facts">
 					<div>
-						<dt>Token</dt>
+						<dt data-i18n="factToken">Token</dt>
 						<dd id="factToken">—</dd>
 					</div>
 					<div>
-						<dt>Chat</dt>
+						<dt data-i18n="factChat">Chat</dt>
 						<dd id="factChat">—</dd>
 					</div>
 					<div>
-						<dt>Pending</dt>
+						<dt data-i18n="factPending">Pending</dt>
 						<dd id="factPending">—</dd>
 					</div>
 					<div>
-						<dt>Allowlist</dt>
+						<dt data-i18n="factAllow">Allowlist</dt>
 						<dd id="factAllow">—</dd>
 					</div>
 				</dl>
 				<div class="actions">
-					<button id="btnBot" class="ghost" type="button">Abrir bot</button>
-					<button id="btnGoConfig" class="ghost" type="button">
+					<button id="btnBot" class="ghost" type="button" data-i18n="btnOpenBot">Abrir bot</button>
+					<button id="btnGoConfig" class="ghost" type="button" data-i18n="btnGoConfig">
 						Ir para Configurar
 					</button>
 				</div>
 			</section>
 
 			<section class="card wide">
-				<h2>Logs</h2>
+				<h2 data-i18n="logsTitle">Logs</h2>
 				<pre id="logs" class="logs"></pre>
 			</section>
 		</div>
@@ -105,34 +113,37 @@
 
 	<section class="panel" id="panel-config">
 		<div class="card wide">
-			<h2>Configurar bot</h2>
-			<p class="muted">
+			<h2 data-i18n="configTitle">Configurar bot</h2>
+			<p class="muted" data-i18n="configDesc">
 				Salva em <code>~/.teleagent/config.json</code>. Depois de salvar token
 				ou porta, reinicie o serviço na aba Início.
 			</p>
 			<form id="configForm" class="form">
 				<label>
-					<span>Bot token (BotFather)</span>
-					<input id="cfgToken" type="password" autocomplete="off" placeholder="123456:ABC..." />
+					<span data-i18n="labelToken">Bot token (BotFather)</span>
+					<input id="cfgToken" type="password" autocomplete="off" data-i18n-placeholder="placeholderToken"
+						placeholder="123456:ABC..." />
 				</label>
 				<label>
-					<span>Chat ID</span>
-					<input id="cfgChat" type="text" placeholder="ex.: 123456789" />
+					<span data-i18n="labelChat">Chat ID</span>
+					<input id="cfgChat" type="text" data-i18n-placeholder="placeholderChat"
+						placeholder="ex.: 123456789" />
 				</label>
 				<label>
-					<span>Allowlist (user ids, vírgula)</span>
-					<input id="cfgAllow" type="text" placeholder="vazio = qualquer /start" />
+					<span data-i18n="labelAllow">Allowlist (user ids, vírgula)</span>
+					<input id="cfgAllow" type="text" data-i18n-placeholder="placeholderAllow"
+						placeholder="vazio = qualquer /start" />
 				</label>
 				<label>
-					<span>Porta local</span>
+					<span data-i18n="labelPort">Porta local</span>
 					<input id="cfgPort" type="number" min="1" max="65535" value="3847" />
 				</label>
 				<div class="actions">
-					<button class="primary" type="submit">Salvar</button>
-					<button id="btnRevealToken" class="ghost" type="button">
+					<button class="primary" type="submit" data-i18n="btnSave">Salvar</button>
+					<button id="btnRevealToken" class="ghost" type="button" data-i18n="btnRevealToken">
 						Mostrar token
 					</button>
-					<button id="btnOpenFolder" class="ghost" type="button">
+					<button id="btnOpenFolder" class="ghost" type="button" data-i18n="btnOpenFolder">
 						Abrir pasta
 					</button>
 				</div>
@@ -143,32 +154,29 @@
 
 	<section class="panel" id="panel-docs">
 		<div class="card wide docs">
-			<h2>Documentação</h2>
+			<h2 data-i18n="docsTitle">Documentação</h2>
 			<ol>
-				<li>
-					Crie o bot no
-					<a href="https://t.me/BotFather" data-external>@BotFather</a>
-					(<code>/newbot</code>) e copie o token.
+				<li data-i18n="docs1">
+					Crie o bot no @BotFather (/newbot) e copie o token.
 				</li>
-				<li>
-					Cole o token na aba <strong>Configurar</strong> e salve. Opcional:
-					allowlist com seu user id do Telegram.
+				<li data-i18n="docs2">
+					Cole o token na aba Configurar e salve. Opcional: allowlist com seu
+					user id do Telegram.
 				</li>
-				<li>
-					Na aba <strong>Início</strong>, inicie o serviço e marque
-					<strong>Iniciar com o Windows</strong> se quiser autostart.
+				<li data-i18n="docs3">
+					Na aba Início, inicie o serviço e marque Iniciar com o Windows se
+					quiser autostart.
 				</li>
-				<li>
-					Abra o bot no Telegram e envie <code>/start</code> para vincular o
-					chat.
+				<li data-i18n="docs4">
+					Abra o bot no Telegram e envie /start para vincular o chat.
 				</li>
-				<li>
-					Use <strong>Testar</strong> para mandar um alerta de prova. Se chegar
-					no Telegram, o bridge está ok.
+				<li data-i18n="docs5">
+					Use Testar para mandar um alerta de prova. Se chegar no Telegram, o
+					bridge está ok.
 				</li>
 			</ol>
-			<h3>CLI (Cursor, Claude, Codex, etc.)</h3>
-			<p class="muted">
+			<h3 data-i18n="docsCliTitle">CLI (Cursor, Claude, Codex, etc.)</h3>
+			<p class="muted" data-i18n="docsCliDesc">
 				Qualquer agent que rode shell na sua máquina pode usar o Teleagent.
 			</p>
 			<pre class="code">
@@ -176,22 +184,23 @@ teleagent alert --project meu-app --message "Build ok" --json
 teleagent ask --project meu-app --question "Promovo?" --options "sim,não" --json
 teleagent status
 </pre>
-			<h3>Comandos no Telegram</h3>
+			<h3 data-i18n="docsTgTitle">Comandos no Telegram</h3>
 			<ul>
-				<li><code>/start</code> — vincula o chat</li>
-				<li><code>/status</code> — bridge + pending</li>
-				<li><code>/pending</code> — decisões abertas</li>
-				<li><code>/help</code> — ajuda</li>
+				<li data-i18n="docsStart"><code>/start</code> — vincula o chat</li>
+				<li data-i18n="docsStatus"><code>/status</code> — bridge + pending</li>
+				<li data-i18n="docsPending"><code>/pending</code> — decisões abertas</li>
+				<li data-i18n="docsHelp"><code>/help</code> — ajuda</li>
 			</ul>
 			<div class="actions">
-				<button id="btnDocsBot" class="ghost" type="button">Abrir bot</button>
-				<button id="btnDocsFather" class="ghost" type="button">
+				<button id="btnDocsBot" class="ghost" type="button" data-i18n="btnDocsBot">Abrir bot</button>
+				<button id="btnDocsFather" class="ghost" type="button" data-i18n="btnDocsFather">
 					Abrir BotFather
 				</button>
 			</div>
 		</div>
 	</section>
 
+	<script src="i18n.js"></script>
 	<script src="app.js"></script>
 </body>
 

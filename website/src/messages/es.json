@@ -1,0 +1,209 @@
+{
+  "Meta": {
+    "title": "Teleagent — agents ↔ Telegram, local-first",
+    "description": "Puente local entre agentes de IA y Telegram. Alertas y decisiones humanas en el loop, sin VPS ni webhook público.",
+    "ogDescription": "Cuando el agent te necesita, Telegram responde — y el agent sigue."
+  },
+  "Nav": {
+    "howItWorks": "Cómo funciona",
+    "demo": "Demo",
+    "download": "Descargar",
+    "docs": "Docs",
+    "support": "Apoyar",
+    "github": "GitHub",
+    "menu": "Menú",
+    "close": "Cerrar",
+    "mainAria": "Principal",
+    "mobileAria": "Móvil"
+  },
+  "Footer": {
+    "tagline": "Puente local entre agentes de IA y Telegram. Sin VPS. Sin webhook público. Tú en el loop.",
+    "download": "Descargar",
+    "docs": "Documentación",
+    "support": "Apoyar",
+    "releases": "Releases",
+    "code": "Código",
+    "copyright": "MIT © MatheusLTrindade · Local-first human-in-the-loop"
+  },
+  "Hero": {
+    "badge": "LOCAL-FIRST · HUMAN IN THE LOOP",
+    "subtitle": "Cuando el agent te necesita, Telegram responde — y el flujo continúa. Sin VPS. Sin webhook público.",
+    "ctaDownload": "Descargar para Windows",
+    "ctaQuickstart": "Empezar en 5 minutos",
+    "bridgeLabel": "bridge · 127.0.0.1:3847",
+    "online": "online"
+  },
+  "HowItWorks": {
+    "eyebrow": "Arquitectura",
+    "title": "Un bot. Un proceso. N proyectos.",
+    "subtitle": "Pasa el cursor (o toca) los nodos — la señal muestra el camino desde la solicitud hasta tu decisión.",
+    "nodes": {
+      "agent": {
+        "title": "Agent",
+        "body": "Cursor, Claude Code, Codex… llama a la CLI o a la API local."
+      },
+      "bridge": {
+        "title": "Bridge local",
+        "body": "teleagent serve corre en tu máquina. Long polling + HTTP en 127.0.0.1."
+      },
+      "telegram": {
+        "title": "Telegram",
+        "body": "Alertas y botones de decisión llegan a tu chat — allowlist por user id."
+      },
+      "you": {
+        "title": "Tú",
+        "body": "Respondes en el móvil. El agent recibe JSON y continúa solo."
+      }
+    }
+  },
+  "LiveDemo": {
+    "eyebrow": "En vivo",
+    "title": "El agent pregunta. Tú decides desde el bolsillo.",
+    "subtitle": "Simulación del flujo `ask`: bloquea al agent, envía botones en Telegram, devuelve JSON y sigue.",
+    "terminalLabel": "Terminal del agent",
+    "telegramLabel": "Telegram",
+    "decision": "DECISIÓN",
+    "question": "¿Promuevo el deploy a producción?",
+    "yes": "sí",
+    "no": "no",
+    "agentCmd": "teleagent ask --project release --question …",
+    "resultJson": "{ \"status\": \"answered\", \"answer\": \"sí\" }"
+  },
+  "Features": {
+    "eyebrow": "Por qué Teleagent",
+    "title": "Control humano, ritmo de agent.",
+    "ctaDocs": "Ver documentación",
+    "items": {
+      "cli": {
+        "title": "CLI + API localhost",
+        "body": "alert, ask, cancel, status — y HTTP en 127.0.0.1:3847 para cualquier runtime."
+      },
+      "desktop": {
+        "title": "App Windows",
+        "body": "Bandeja, hub, autostart y auto-update vía GitHub Releases (instalador NSIS)."
+      },
+      "allowlist": {
+        "title": "Allowlist",
+        "body": "Solo los Telegram user ids que autorices controlan el bot."
+      },
+      "skill": {
+        "title": "Skill Cursor",
+        "body": "Instrucciones listas para que el agent use ask/alert en el loop sin inventar intención."
+      }
+    }
+  },
+  "SupportBand": {
+    "eyebrow": "Apoyar el proyecto",
+    "title": "Si Teleagent te evitó un deploy malo, puedes retribuir.",
+    "body": "El proyecto es open source (MIT). Los apoyos vía GitHub Sponsors ayudan a mantener bridge, desktop y docs — sin paywall, sin telemetría.",
+    "ctaSponsor": "Patrocinar en GitHub",
+    "ctaMore": "Saber más"
+  },
+  "CtaBand": {
+    "title": "Pon al humano en el loop hoy.",
+    "body": "Descarga el hub Windows o ejecuta la CLI. En minutos el agent habla contigo en Telegram.",
+    "ctaDownload": "Ir a descargar",
+    "ctaStar": "Dar estrella en GitHub"
+  },
+  "Download": {
+    "metadataTitle": "Descargar",
+    "metadataDesc": "Descarga Teleagent para Windows o clona la CLI.",
+    "eyebrow": "Descargar",
+    "title": "Lleva el bridge a la bandeja.",
+    "subtitle": "Instalador con auto-update, portable sin instalación, o CLI vía npm para cualquier OS con Node 20+.",
+    "latestRelease": "Última release:",
+    "releaseFallback": "No se pudo leer la última release ahora. Usa GitHub Releases.",
+    "recommended": "Recomendado",
+    "nsisTitle": "Instalador NSIS",
+    "nsisBody": "Teleagent-Setup — bandeja, hub y auto-update vía GitHub Releases.",
+    "downloadSetup": "Descargar {name} · {size}",
+    "openReleases": "Abrir releases →",
+    "portable": "Portable",
+    "portableTitle": "EXE portátil",
+    "portableBody": "Sin instalador ni auto-update. Ideal para probar rápido.",
+    "downloadPortable": "Descargar {name} · {size}",
+    "cliTitle": "CLI (cualquier OS)",
+    "cliBody": "Node.js 20+, clona el repo, build y link global.",
+    "guide": "Guía rápida",
+    "allReleases": "Todas las releases"
+  },
+  "SupportPage": {
+    "metadataTitle": "Apoyar",
+    "metadataDesc": "Apoya el desarrollo de Teleagent vía GitHub Sponsors — open source, local-first.",
+    "eyebrow": "Apoyar",
+    "title": "Ayuda a Teleagent a seguir local-first.",
+    "subtitle": "Si el bridge te dio tranquilidad en un ask crítico, un café ayuda a pagar tiempo de mantenimiento. Gracias — de verdad.",
+    "reasons": {
+      "pace": {
+        "title": "Mantiene el ritmo",
+        "body": "Bridge, app Windows, docs y releases siguen evolucionando sin ads ni telemetría."
+      },
+      "value": {
+        "title": "Tú eliges el valor",
+        "body": "GitHub Sponsors permite apoyo único o recurrente — del café al patrocinio."
+      },
+      "transparent": {
+        "title": "Transparente",
+        "body": "Todo ocurre en la cuenta GitHub del autor. Sin intermediario misterioso en el sitio."
+      }
+    },
+    "sponsorsTitle": "GitHub Sponsors",
+    "sponsorsBody": "El apoyo va directo a @MatheusLTrindade por la plataforma oficial de GitHub. Usas la cuenta que ya tienes — tarjeta gestionada por GitHub.",
+    "openSponsors": "Abrir página de patrocinio",
+    "backDocs": "Volver a las docs",
+    "linkLabel": "Enlace:"
+  },
+  "Docs": {
+    "sidebarTitle": "Documentación",
+    "sections": {
+      "start": "Empezar",
+      "reference": "Referencia",
+      "product": "Producto",
+      "ops": "Operación"
+    },
+    "intro": {
+      "title": "Introducción",
+      "description": "Qué es Teleagent y cuándo usarlo."
+    },
+    "quickstart": {
+      "title": "Quickstart",
+      "description": "Del BotFather al primer ask en minutos."
+    },
+    "cli": {
+      "title": "CLI",
+      "description": "Comandos, flags y códigos de salida."
+    },
+    "api": {
+      "title": "API local",
+      "description": "Endpoints HTTP en 127.0.0.1."
+    },
+    "desktop": {
+      "title": "App Windows",
+      "description": "Hub, bandeja, autostart y auto-update."
+    },
+    "skill": {
+      "title": "Skill Cursor",
+      "description": "Cómo el agent usa alert/ask en el loop."
+    },
+    "config": {
+      "title": "Configuración",
+      "description": "Archivo local, env vars y allowlist."
+    },
+    "architecture": {
+      "title": "Arquitectura",
+      "description": "Componentes y flujo de decisión."
+    },
+    "security": {
+      "title": "Seguridad",
+      "description": "Localhost, allowlist y secretos."
+    }
+  },
+  "CopyCode": {
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "Common": {
+    "yes": "sí",
+    "no": "no"
+  }
+}
