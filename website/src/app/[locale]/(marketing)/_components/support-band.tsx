@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { SPONSOR_URL } from "@/modules/support/public";
 
 export function SupportBand() {
+	const t = useTranslations("SupportBand");
 	const reduce = useReducedMotion();
 
 	return (
@@ -22,16 +24,12 @@ export function SupportBand() {
 				<div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 					<div className="max-w-xl">
 						<p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--amber)]">
-							Apoiar o projeto
+							{t("eyebrow")}
 						</p>
 						<h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold tracking-[-0.04em] md:text-4xl">
-							Se o Teleagent te poupou um deploy ruim, você pode retribuir.
+							{t("title")}
 						</h2>
-						<p className="mt-3 text-[color:var(--muted)]">
-							O projeto é open source (MIT). Apoios via GitHub Sponsors
-							ajudam a manter bridge, desktop e docs — sem paywall, sem
-							telemetry.
-						</p>
+						<p className="mt-3 text-[color:var(--muted)]">{t("body")}</p>
 					</div>
 					<div className="flex flex-wrap gap-3">
 						<a
@@ -40,10 +38,10 @@ export function SupportBand() {
 							rel="noreferrer"
 							className="btn btn-primary"
 						>
-							Patrocinar no GitHub
+							{t("ctaSponsor")}
 						</a>
 						<Link href="/apoiar" className="btn btn-ghost">
-							Saiba mais
+							{t("ctaMore")}
 						</Link>
 					</div>
 				</div>

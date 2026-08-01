@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export function HeroSection() {
+	const t = useTranslations("Hero");
 	const reduce = useReducedMotion();
 
 	return (
@@ -20,7 +22,7 @@ export function HeroSection() {
 							<span className="absolute inset-0 animate-[pulse-ring_1.6s_ease-out_infinite] rounded-full bg-[color:var(--mint)]" />
 							<span className="relative h-2 w-2 rounded-full bg-[color:var(--mint)]" />
 						</span>
-						LOCAL-FIRST · HUMAN IN THE LOOP
+						{t("badge")}
 					</motion.p>
 
 					<motion.h1
@@ -38,8 +40,7 @@ export function HeroSection() {
 						transition={{ duration: 0.5, delay: 0.12 }}
 						className="mt-5 max-w-xl text-lg text-[color:var(--muted)] md:text-xl"
 					>
-						Quando o agent precisa de você, o Telegram responde — e o fluxo
-						continua. Sem VPS. Sem webhook público.
+						{t("subtitle")}
 					</motion.p>
 
 					<motion.div
@@ -49,10 +50,10 @@ export function HeroSection() {
 						className="mt-8 flex flex-wrap gap-3"
 					>
 						<Link href="/download" className="btn btn-primary">
-							Baixar para Windows
+							{t("ctaDownload")}
 						</Link>
 						<Link href="/docs/quickstart" className="btn btn-ghost">
-							Começar em 5 minutos
+							{t("ctaQuickstart")}
 						</Link>
 					</motion.div>
 				</div>
@@ -67,8 +68,8 @@ export function HeroSection() {
 					<div className="absolute -inset-6 rounded-[28px] bg-[radial-gradient(circle_at_30%_20%,rgba(79,209,255,0.22),transparent_55%)] blur-2xl" />
 					<div className="relative overflow-hidden rounded-[28px] border border-[color:var(--line)] bg-[linear-gradient(160deg,rgba(12,18,32,0.95),rgba(6,9,18,0.92))] p-5 shadow-[var(--shadow)]">
 						<div className="mb-4 flex items-center justify-between text-xs text-[color:var(--muted)]">
-							<span>bridge · 127.0.0.1:3847</span>
-							<span className="text-[color:var(--mint)]">online</span>
+							<span>{t("bridgeLabel")}</span>
+							<span className="text-[color:var(--mint)]">{t("online")}</span>
 						</div>
 						<pre className="overflow-x-auto rounded-2xl border border-[color:var(--line)] bg-[#050910] p-4 text-[0.82rem] leading-relaxed text-[#cfe6ff]">
 							<span className="text-[color:var(--muted)]">$</span> teleagent ask

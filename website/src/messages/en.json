@@ -1,0 +1,209 @@
+{
+  "Meta": {
+    "title": "Teleagent — agents ↔ Telegram, local-first",
+    "description": "Local bridge between AI agents and Telegram. Alerts and human decisions in the loop — no VPS, no public webhook.",
+    "ogDescription": "When your agent needs you, Telegram answers — and the agent keeps going."
+  },
+  "Nav": {
+    "howItWorks": "How it works",
+    "demo": "Demo",
+    "download": "Download",
+    "docs": "Docs",
+    "support": "Support",
+    "github": "GitHub",
+    "menu": "Menu",
+    "close": "Close",
+    "mainAria": "Main",
+    "mobileAria": "Mobile"
+  },
+  "Footer": {
+    "tagline": "Local bridge between AI agents and Telegram. No VPS. No public webhook. You're in the loop.",
+    "download": "Download",
+    "docs": "Documentation",
+    "support": "Support",
+    "releases": "Releases",
+    "code": "Source code",
+    "copyright": "MIT © MatheusLTrindade · Local-first human-in-the-loop"
+  },
+  "Hero": {
+    "badge": "LOCAL-FIRST · HUMAN IN THE LOOP",
+    "subtitle": "When your agent needs you, Telegram answers — and the flow continues. No VPS. No public webhook.",
+    "ctaDownload": "Download for Windows",
+    "ctaQuickstart": "Get started in 5 minutes",
+    "bridgeLabel": "bridge · 127.0.0.1:3847",
+    "online": "online"
+  },
+  "HowItWorks": {
+    "eyebrow": "Architecture",
+    "title": "One bot. One process. N projects.",
+    "subtitle": "Hover (or tap) the nodes — the signal shows the path from request to your decision.",
+    "nodes": {
+      "agent": {
+        "title": "Agent",
+        "body": "Cursor, Claude Code, Codex… call the CLI or local API."
+      },
+      "bridge": {
+        "title": "Local bridge",
+        "body": "teleagent serve runs on your machine. Long polling + HTTP on 127.0.0.1."
+      },
+      "telegram": {
+        "title": "Telegram",
+        "body": "Alerts and decision buttons land in your chat — allowlist by user id."
+      },
+      "you": {
+        "title": "You",
+        "body": "Reply on your phone. The agent gets JSON and continues on its own."
+      }
+    }
+  },
+  "LiveDemo": {
+    "eyebrow": "Live",
+    "title": "The agent asks. You decide from your pocket.",
+    "subtitle": "Simulation of the `ask` flow: blocks the agent, sends buttons on Telegram, returns JSON, and moves on.",
+    "terminalLabel": "Agent terminal",
+    "telegramLabel": "Telegram",
+    "decision": "DECISION",
+    "question": "Promote the deploy to production?",
+    "yes": "yes",
+    "no": "no",
+    "agentCmd": "teleagent ask --project release --question …",
+    "resultJson": "{ \"status\": \"answered\", \"answer\": \"yes\" }"
+  },
+  "Features": {
+    "eyebrow": "Why Teleagent",
+    "title": "Human control, agent pace.",
+    "ctaDocs": "View documentation",
+    "items": {
+      "cli": {
+        "title": "CLI + localhost API",
+        "body": "alert, ask, cancel, status — and HTTP on 127.0.0.1:3847 for any runtime."
+      },
+      "desktop": {
+        "title": "Windows app",
+        "body": "Tray, hub, autostart, and auto-update via GitHub Releases (NSIS installer)."
+      },
+      "allowlist": {
+        "title": "Allowlist",
+        "body": "Only Telegram user ids you authorize can control the bot."
+      },
+      "skill": {
+        "title": "Cursor skill",
+        "body": "Ready-made instructions so the agent uses ask/alert in the loop without guessing intent."
+      }
+    }
+  },
+  "SupportBand": {
+    "eyebrow": "Support the project",
+    "title": "If Teleagent saved you from a bad deploy, you can give back.",
+    "body": "The project is open source (MIT). Support via GitHub Sponsors helps maintain the bridge, desktop app, and docs — no paywall, no telemetry.",
+    "ctaSponsor": "Sponsor on GitHub",
+    "ctaMore": "Learn more"
+  },
+  "CtaBand": {
+    "title": "Put the human in the loop today.",
+    "body": "Download the Windows hub or run the CLI. In minutes your agent talks to you on Telegram.",
+    "ctaDownload": "Go to download",
+    "ctaStar": "Star on GitHub"
+  },
+  "Download": {
+    "metadataTitle": "Download",
+    "metadataDesc": "Download Teleagent for Windows or clone the CLI.",
+    "eyebrow": "Download",
+    "title": "Put the bridge in your tray.",
+    "subtitle": "Installer with auto-update, portable with no install, or CLI via npm for any OS with Node 20+.",
+    "latestRelease": "Latest release:",
+    "releaseFallback": "Could not fetch the latest release right now. Use GitHub Releases.",
+    "recommended": "Recommended",
+    "nsisTitle": "NSIS installer",
+    "nsisBody": "Teleagent-Setup — tray, hub, and auto-update via GitHub Releases.",
+    "downloadSetup": "Download {name} · {size}",
+    "openReleases": "Open releases →",
+    "portable": "Portable",
+    "portableTitle": "Portable EXE",
+    "portableBody": "No installer and no auto-update. Great for a quick test.",
+    "downloadPortable": "Download {name} · {size}",
+    "cliTitle": "CLI (any OS)",
+    "cliBody": "Node.js 20+, clone the repo, build, and link globally.",
+    "guide": "Quickstart guide",
+    "allReleases": "All releases"
+  },
+  "SupportPage": {
+    "metadataTitle": "Support",
+    "metadataDesc": "Support Teleagent development via GitHub Sponsors — open source, local-first.",
+    "eyebrow": "Support",
+    "title": "Help Teleagent stay local-first.",
+    "subtitle": "If the bridge gave you peace during a critical ask, a coffee helps cover maintenance time. Thank you — sincerely.",
+    "reasons": {
+      "pace": {
+        "title": "Keeps the pace",
+        "body": "Bridge, Windows app, docs, and releases keep evolving — no ads, no telemetry."
+      },
+      "value": {
+        "title": "You choose the amount",
+        "body": "GitHub Sponsors supports one-time or recurring support — from a coffee to full sponsorship."
+      },
+      "transparent": {
+        "title": "Transparent",
+        "body": "Everything happens on the author's GitHub account. No mysterious middleman on this site."
+      }
+    },
+    "sponsorsTitle": "GitHub Sponsors",
+    "sponsorsBody": "Support goes directly to @MatheusLTrindade through GitHub's official platform. Use the account you already have — card managed by GitHub.",
+    "openSponsors": "Open sponsorship page",
+    "backDocs": "Back to docs",
+    "linkLabel": "Link:"
+  },
+  "Docs": {
+    "sidebarTitle": "Documentation",
+    "sections": {
+      "start": "Get started",
+      "reference": "Reference",
+      "product": "Product",
+      "ops": "Operations"
+    },
+    "intro": {
+      "title": "Introduction",
+      "description": "What Teleagent is and when to use it."
+    },
+    "quickstart": {
+      "title": "Quickstart",
+      "description": "From BotFather to your first ask in minutes."
+    },
+    "cli": {
+      "title": "CLI",
+      "description": "Commands, flags, and exit codes."
+    },
+    "api": {
+      "title": "Local API",
+      "description": "HTTP endpoints on 127.0.0.1."
+    },
+    "desktop": {
+      "title": "Windows app",
+      "description": "Hub, tray, autostart, and auto-update."
+    },
+    "skill": {
+      "title": "Cursor skill",
+      "description": "How the agent uses alert/ask in the loop."
+    },
+    "config": {
+      "title": "Configuration",
+      "description": "Local file, env vars, and allowlist."
+    },
+    "architecture": {
+      "title": "Architecture",
+      "description": "Components and decision flow."
+    },
+    "security": {
+      "title": "Security",
+      "description": "Localhost, allowlist, and secrets."
+    }
+  },
+  "CopyCode": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "Common": {
+    "yes": "yes",
+    "no": "no"
+  }
+}

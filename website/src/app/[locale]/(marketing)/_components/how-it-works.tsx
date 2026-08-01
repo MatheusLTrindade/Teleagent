@@ -1,34 +1,25 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
-const nodes = [
-	{
-		id: "agent",
-		title: "Agent",
-		body: "Cursor, Claude Code, Codex… chama a CLI ou a API local.",
-	},
-	{
-		id: "bridge",
-		title: "Bridge local",
-		body: "teleagent serve na sua máquina. Long polling + HTTP em 127.0.0.1.",
-	},
-	{
-		id: "telegram",
-		title: "Telegram",
-		body: "Alertas e botões de decisão chegam no seu chat — allowlist por user id.",
-	},
-	{
-		id: "you",
-		title: "Você",
-		body: "Responde no celular. O agent recebe JSON e continua sozinho.",
-	},
-];
+const NODE_IDS = ["agent", "bridge", "telegram", "you"] as const;
 
 export function HowItWorks() {
+	const t = useTranslations("HowItWorks");
 	const reduce = useReducedMotion();
 	const [active, setActive] = useState("bridge");
+
+	const nodes = useMemo(
+		() =>
+			NODE_IDS.map((id) => ({
+				id,
+				title: t(`nodes.${id}.title`),
+				body: t(`nodes.${id}.body`),
+			})),
+		[t],
+	);
 
 	return (
 		<section
@@ -38,15 +29,12 @@ export function HowItWorks() {
 			<div className="mx-auto max-w-6xl">
 				<div className="max-w-2xl">
 					<p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--mint)]">
-						Arquitetura
+						{t("eyebrow")}
 					</p>
 					<h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-bold tracking-[-0.04em] md:text-4xl">
-						Um bot. Um processo. N projetos.
+						{t("title")}
 					</h2>
-					<p className="mt-3 text-[color:var(--muted)]">
-						Passe o mouse (ou toque) nos nós — o sinal mostra o caminho do
-						pedido até a sua decisão.
-					</p>
+					<p className="mt-3 text-[color:var(--muted)]">{t("subtitle")}</p>
 				</div>
 
 				<div className="mt-10 grid gap-3 md:grid-cols-4">

@@ -1,5 +1,6 @@
 export {
-	DOC_NAV,
+	DOC_SLUGS,
+	getDocNav,
 	getDoc,
 	groupedDocs,
 	type DocNavItem,

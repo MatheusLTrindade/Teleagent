@@ -1,3 +1,5 @@
+const { dictionaries, formatMessage } = window.TeleagentI18n;
+
 const pill = document.getElementById('statusPill');
 const factToken = document.getElementById('factToken');
 const factChat = document.getElementById('factChat');
@@ -20,11 +22,60 @@ const updateTitle = document.getElementById('updateTitle');
 const updateDetail = document.getElementById('updateDetail');
 const btnCheckUpdate = document.getElementById('btnCheckUpdate');
 const btnApplyUpdate = document.getElementById('btnApplyUpdate');
+const langSelect = document.getElementById('langSelect');
+const btnRevealToken = document.getElementById('btnRevealToken');
 
 let online = false;
 let fillingConfig = false;
 /** @type {string | null} */
 let lastUpdateStatus = null;
+/** @type {import('./i18n.js').Locale} */
+let locale = 'pt';
+/** @type {any} */
+let lastStatus = null;
+
+function t(key, vars) {
+	const dict = dictionaries[locale] || dictionaries.pt;
+	const template = dict[key] || dictionaries.pt[key] || key;
+	return vars ? formatMessage(template, vars) : template;
+}
+
+function detectLocale() {
+	const saved = localStorage.getItem('teleagent.lang');
+	if (saved && dictionaries[saved]) return saved;
+	const nav = (navigator.language || 'pt').toLowerCase();
+	if (nav.startsWith('es')) return 'es';
+	if (nav.startsWith('en')) return 'en';
+	return 'pt';
+}
+
+function applyStaticI18n() {
+	document.documentElement.lang =
+		locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es' : 'en';
+	document.querySelectorAll('[data-i18n]').forEach((el) => {
+		const key = el.getAttribute('data-i18n');
+		if (!key) return;
+		el.textContent = t(key);
+	});
+	document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+		const key = el.getAttribute('data-i18n-placeholder');
+		if (!key || !('placeholder' in el)) return;
+		el.placeholder = t(key);
+	});
+	langSelect.value = locale;
+	btnRevealToken.textContent =
+		cfgToken.type === 'password' ? t('btnRevealToken') : t('btnHideToken');
+}
+
+function setLocale(next) {
+	if (!dictionaries[next]) return;
+	locale = next;
+	localStorage.setItem('teleagent.lang', locale);
+	applyStaticI18n();
+	if (lastStatus) applyStatus(lastStatus);
+	else applyToggle();
+	void window.teleagent.fitWindow();
+}
 
 function renderLogs(lines) {
 	logsEl.textContent = (lines || []).join('\n');
@@ -32,8 +83,8 @@ function renderLogs(lines) {
 }
 
 function setTab(name) {
-	document.querySelectorAll('.tab').forEach((t) => {
-		t.classList.toggle('active', t.dataset.tab === name);
+	document.querySelectorAll('.tab').forEach((tab) => {
+		tab.classList.toggle('active', tab.dataset.tab === name);
 	});
 	document.querySelectorAll('.panel').forEach((p) => {
 		p.classList.toggle('active', p.id === `panel-${name}`);
@@ -42,7 +93,7 @@ function setTab(name) {
 }
 
 function applyToggle() {
-	btnToggle.textContent = online ? 'Parar' : 'Iniciar';
+	btnToggle.textContent = online ? t('btnStop') : t('btnStart');
 	btnToggle.classList.toggle('danger', online);
 }
 
@@ -79,28 +130,30 @@ function applyUpdate(update, version) {
 	btnApplyUpdate.disabled = false;
 
 	if (status === 'checking') {
-		updateTitle.textContent = 'Verificando…';
-		updateDetail.textContent = 'Consultando GitHub Releases.';
+		updateTitle.textContent = t('updChecking');
+		updateDetail.textContent = t('updCheckingDetail');
 	} else if (status === 'available') {
-		updateTitle.textContent = `Nova versão ${available}`;
-		updateDetail.textContent = `Você está em v${version}.`;
+		updateTitle.textContent = t('updAvailable', { version: available });
+		updateDetail.textContent = t('updAvailableDetail', { current: version });
 		btnApplyUpdate.hidden = false;
-		btnApplyUpdate.textContent = 'Baixar atualização';
+		btnApplyUpdate.textContent = t('updDownload');
 	} else if (status === 'downloading') {
 		const pct =
 			update.progress !== null && update.progress !== undefined
 				? ` ${update.progress}%`
 				: '';
-		updateTitle.textContent = `Baixando${pct}`;
-		updateDetail.textContent = available ? `Versão ${available}` : 'Aguarde…';
+		updateTitle.textContent = t('updDownloading', { pct });
+		updateDetail.textContent = available
+			? t('updDownloadingDetail', { version: available })
+			: t('updWait');
 	} else if (status === 'ready') {
-		updateTitle.textContent = `Pronto para instalar ${available}`;
-		updateDetail.textContent = 'O app vai reiniciar para aplicar.';
+		updateTitle.textContent = t('updReady', { version: available });
+		updateDetail.textContent = t('updReadyDetail');
 		btnApplyUpdate.hidden = false;
-		btnApplyUpdate.textContent = 'Instalar e reiniciar';
+		btnApplyUpdate.textContent = t('updInstall');
 	} else if (status === 'error') {
-		updateTitle.textContent = 'Falha ao atualizar';
-		updateDetail.textContent = update.error || 'Tente novamente.';
+		updateTitle.textContent = t('updError');
+		updateDetail.textContent = update.error || t('updRetry');
 	}
 
 	if (status !== lastUpdateStatus) {
@@ -111,22 +164,21 @@ function applyUpdate(update, version) {
 
 function applyStatus(s) {
 	if (!s) return;
+	lastStatus = s;
 	online = Boolean(s.running || s.health?.ok);
-	pill.textContent = online ? 'online' : 'offline';
+	pill.textContent = online ? t('online') : t('offline');
 	pill.className = `pill ${online ? 'ok' : 'off'}`;
 	applyToggle();
 	applyUpdate(s.update, s.version);
-	factToken.textContent = s.config?.hasToken ? 'configurado' : 'ausente';
-	factChat.textContent = s.config?.chatId || 'não vinculado';
+	factToken.textContent = s.config?.hasToken ? t('tokenOk') : t('tokenMissing');
+	factChat.textContent = s.config?.chatId || t('chatUnlinked');
 	factPending.textContent =
 		s.health?.pending !== undefined ? String(s.health.pending) : '—';
 	const allow = s.config?.allowedUserIds || [];
-	factAllow.textContent = allow.length ? allow.join(', ') : 'aberta';
+	factAllow.textContent = allow.length ? allow.join(', ') : t('allowOpen');
 	hintPort.textContent = String(s.config?.port || 3847);
 	autostart.checked = Boolean(s.autostart);
-	autostartHint.textContent = s.autostart
-		? 'O app tentará abrir oculto ao ligar o Windows.'
-		: '';
+	autostartHint.textContent = s.autostart ? t('autostartOn') : '';
 	if (!fillingConfig) {
 		cfgToken.value = s.config?.botToken || '';
 		cfgChat.value = s.config?.chatId || '';
@@ -140,6 +192,8 @@ async function refresh() {
 	const s = await window.teleagent.getStatus();
 	applyStatus(s);
 }
+
+langSelect.addEventListener('change', () => setLocale(langSelect.value));
 
 document.querySelectorAll('.tab').forEach((tab) => {
 	tab.addEventListener('click', () => setTab(tab.dataset.tab));
@@ -159,10 +213,7 @@ btnToggle.addEventListener('click', async () => {
 btnTest.addEventListener('click', async () => {
 	btnTest.disabled = true;
 	try {
-		const r = await window.teleagent.testAlert();
-		if (!r?.ok) {
-			configMsg.textContent = '';
-		}
+		await window.teleagent.testAlert();
 		await refresh();
 	} finally {
 		btnTest.disabled = false;
@@ -199,8 +250,8 @@ autostart.addEventListener('change', async () => {
 	const r = await window.teleagent.setAutostart(autostart.checked);
 	autostart.checked = Boolean(r?.autostart);
 	autostartHint.textContent = autostart.checked
-		? 'Ativado. Se não abrir sozinho, confira Inicializar apps no Windows.'
-		: 'Desativado.';
+		? t('autostartEnabled')
+		: t('autostartOff');
 	await refresh();
 });
 
@@ -216,14 +267,16 @@ document.getElementById('btnOpenFolder').addEventListener('click', () => {
 	void window.teleagent.openConfig();
 });
 
-document.getElementById('btnRevealToken').addEventListener('click', () => {
+btnRevealToken.addEventListener('click', () => {
 	cfgToken.type = cfgToken.type === 'password' ? 'text' : 'password';
+	btnRevealToken.textContent =
+		cfgToken.type === 'password' ? t('btnRevealToken') : t('btnHideToken');
 });
 
 document.getElementById('configForm').addEventListener('submit', async (e) => {
 	e.preventDefault();
 	fillingConfig = true;
-	configMsg.textContent = 'Salvando…';
+	configMsg.textContent = t('saving');
 	try {
 		await window.teleagent.saveConfig({
 			botToken: cfgToken.value,
@@ -231,8 +284,7 @@ document.getElementById('configForm').addEventListener('submit', async (e) => {
 			allowedUserIds: cfgAllow.value,
 			port: cfgPort.value,
 		});
-		configMsg.textContent =
-			'Salvo. Reinicie o serviço na aba Início para aplicar.';
+		configMsg.textContent = t('saved');
 		await refresh();
 	} catch (err) {
 		configMsg.textContent = String(err);
@@ -267,5 +319,7 @@ window.teleagent.onLog((line) => {
 	renderLogs(current.slice(-80));
 });
 
+locale = detectLocale();
+applyStaticI18n();
 void refresh();
 setInterval(() => void refresh(), 5000);

@@ -1,6 +1,9 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+	const t = await getTranslations("Footer");
+
 	return (
 		<footer className="mt-24 border-t border-[color:var(--line)]">
 			<div className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 md:flex-row md:items-end md:justify-between md:px-8">
@@ -9,19 +12,18 @@ export function SiteFooter() {
 						Teleagent
 					</p>
 					<p className="mt-2 max-w-md text-sm text-[color:var(--muted)]">
-						Bridge local entre agentes de IA e Telegram. Sem VPS. Sem webhook
-						público. Só você no loop.
+						{t("tagline")}
 					</p>
 				</div>
 				<div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-[color:var(--muted)]">
 					<Link href="/download" className="hover:text-[color:var(--ink)]">
-						Download
+						{t("download")}
 					</Link>
 					<Link href="/docs" className="hover:text-[color:var(--ink)]">
-						Documentação
+						{t("docs")}
 					</Link>
 					<Link href="/apoiar" className="hover:text-[color:var(--amber)]">
-						Apoiar
+						{t("support")}
 					</Link>
 					<a
 						href="https://github.com/MatheusLTrindade/Teleagent/releases"
@@ -29,7 +31,7 @@ export function SiteFooter() {
 						rel="noreferrer"
 						className="hover:text-[color:var(--ink)]"
 					>
-						Releases
+						{t("releases")}
 					</a>
 					<a
 						href="https://github.com/MatheusLTrindade/Teleagent"
@@ -37,13 +39,13 @@ export function SiteFooter() {
 						rel="noreferrer"
 						className="hover:text-[color:var(--ink)]"
 					>
-						Código
+						{t("code")}
 					</a>
 				</div>
 			</div>
 			<div className="border-t border-[color:var(--line)]">
 				<p className="mx-auto max-w-6xl px-5 py-4 text-xs text-[color:var(--muted)] md:px-8">
-					MIT © MatheusLTrindade · Local-first human-in-the-loop
+					{t("copyright")}
 				</p>
 			</div>
 		</footer>

@@ -10,12 +10,20 @@ npm install
 npm run dev
 ```
 
+Open `/pt`, `/en` or `/es` (middleware redirects `/` to the default locale `pt`).
+
 ## Build
 
 ```bash
 npm run build
 npm start
 ```
+
+## i18n
+
+- Locales: `pt` (default), `en`, `es`
+- Messages: `src/messages/{pt,en,es}.json`
+- Routing: `next-intl` + `src/middleware.ts`
 
 ## Vercel (deploy automático via GitHub)
 
