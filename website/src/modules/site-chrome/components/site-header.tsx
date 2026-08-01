@@ -11,6 +11,7 @@ const links = [
 	{ href: "/#demo", label: "Demo" },
 	{ href: "/download", label: "Download" },
 	{ href: "/docs", label: "Docs" },
+	{ href: "/apoiar", label: "Apoiar" },
 ];
 
 export function SiteHeader() {

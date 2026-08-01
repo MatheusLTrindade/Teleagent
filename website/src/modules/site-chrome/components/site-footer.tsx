@@ -20,6 +20,9 @@ export function SiteFooter() {
 					<Link href="/docs" className="hover:text-[color:var(--ink)]">
 						Documentação
 					</Link>
+					<Link href="/apoiar" className="hover:text-[color:var(--amber)]">
+						Apoiar
+					</Link>
 					<a
 						href="https://github.com/MatheusLTrindade/Teleagent/releases"
 						target="_blank"
