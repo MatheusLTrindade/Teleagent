@@ -1,6 +1,6 @@
 {
 	"name": "teleagent-desktop",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"private": true,
 	"description": "Teleagent Windows hub — tray + start/stop bridge",
 	"main": "src/main.cjs",
@@ -10,6 +10,7 @@
 	},
 	"scripts": {
 		"start": "electron .",
+		"check-hub-boot": "node scripts/check-hub-boot.cjs",
 		"prepare-bridge": "node scripts/prepare-bridge.cjs",
 		"predist": "npm run prepare-bridge",
 		"prepack": "npm run prepare-bridge",
